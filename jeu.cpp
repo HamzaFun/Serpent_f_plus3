@@ -58,18 +58,38 @@ void Jeu::keyPressEvent(QKeyEvent *event)
 }
 void Jeu::afficherFin(QString titre, QString jouer)
 {
-    titreText = creertext(titre, "baloo 2", Qt::black);
+    titreText = creertext(titre, "baloo 2", Qt::white);
 
     Button* joue = creerStg(jouer, 150, 40, titreText->boundingRect().width()/2 - 75, 170, 0, true, titreText);
     Button* quit = new Button("<< RETOUR", 150, 40, titreText);
-    int rx = titreText->boundingRect().width()/2 - quit->boundingRect().width()/2;
-    int ry = 220;
-    quit->setPos(rx,ry);
+    quit->setPos(titreText->boundingRect().width()/2 - quit->boundingRect().width()/2, 220);
     connect(quit, SIGNAL(clicked()), this, SLOT(routeurMenu()));
 
     Q_UNUSED(joue);
     Q_UNUSED(quit);
 
+}
+
+void Jeu::afficherVictoire()
+{
+    if(serp != NULL){
+        sceneDeJeu->removeItem(serp);
+        delete serp;
+        serp = NULL;
+    }
+
+    victoireText = creertext("Vous Gagnez!", "baloo 2", Qt::black);
+//    background->setPixmap(QPixmap(":/bg/menu.jpg").scaled(1200,600));
+//    sceneDeJeu->addItem(background);
+    QGraphicsPixmapItem* cp = new QGraphicsPixmapItem();
+    cp->setPos(victoireText->boundingRect().width()/2 + 200, 200);
+    cp->setPixmap(QPixmap(":/images/coupe.png").scaled(400,300));
+    sceneDeJeu->addItem(cp);
+
+    //bouuton de routeur
+    Button* retour = new Button("<< RETOUR AU MENU", 150, 50, victoireText);
+    retour->setPos(victoireText->boundingRect().width()/2 - retour->boundingRect().width()/2,425);
+    connect(retour, SIGNAL(clicked()), this, SLOT(retourAffich()));
 }
 void Jeu::afficherMenu(QString titre, QString jouer)
 {
@@ -77,21 +97,20 @@ void Jeu::afficherMenu(QString titre, QString jouer)
     background_music->stopMusic();
     menu_music->playMusic();
 
-    background->setPixmap(QPixmap(":/bg/imageMenu.jpg").scaled(1200,600));
+    background->setPixmap(QPixmap(":/bg/menu.jpg").scaled(1200,600));
     sceneDeJeu->addItem(background);
     titreText = creertext(titre, "baloo 2", Qt::white);
+
     if(m_opacityAnimation->state() == QAbstractAnimation::Stopped)
         m_opacityAnimation->start();
 
     Button* menu = new Button("STAGES", 150,40, titreText);
-    int mxPos = titreText->boundingRect().width()/2 - menu->boundingRect().width()/2 ;
-    int myPos = 120;
-    menu->setPos(mxPos,myPos);
+    menu->setPos(titreText->boundingRect().width()/2 - menu->boundingRect().width()/2, 120);
 
     connect(menu, SIGNAL(clicked()), this, SLOT(afficherStages()));
 
     Button* joue = creerStg(jouer, 150, 40, titreText->boundingRect().width()/2 - 75, 170, 0, true, titreText);
-    Button* quit = creerStg("QUIT", 150, 40, titreText->boundingRect().width()/2 - 75, 220, 0, false, titreText);
+    Button* quit = creerStg("QUITTER", 150, 40, titreText->boundingRect().width()/2 - 75, 220, 0, false, titreText);
 
     Q_UNUSED(joue);
     Q_UNUSED(quit);
@@ -105,14 +124,14 @@ void Jeu::afficherStages()
 
     //creer texte de stages menu
     stagesText = creertext("STAGES", font, Qt::white);
+
     if(m_opacityAnimation->state() == QAbstractAnimation::Stopped)
         m_opacityAnimation->start();
 
 
     //creer les bouttons des stages
-    int x = 60;
-    Button* stage = creerStg("1", 50, 50, 0,100, 1, true, stagesText);
-    Button* stage2 = creerStg("2", 50, 50, x ,100, 2, true, stagesText);
+    Button* stage = creerStg("1", 50, 50, -50,100, 1, true, stagesText);
+    Button* stage2 = creerStg("2", 50, 50, 25 ,100, 2, true, stagesText);
     Button* stage3 = creerStg("3", 50, 50, 100,100, 3, true, stagesText);
     Button* stage4 = creerStg("4", 50, 50, 175,100, 4, true, stagesText);
     Button* stage5 = creerStg("5", 50, 50, 250,100, 5, true, stagesText);
@@ -121,9 +140,7 @@ void Jeu::afficherStages()
 
     //bouuton de routeur
     Button* retour = new Button("<< RETOUR", 100, 50, stagesText);
-    int rx = stagesText->boundingRect().width()/2 - retour->boundingRect().width()/2;
-    int ry = 400;
-    retour->setPos(rx,ry);
+    retour->setPos(stagesText->boundingRect().width()/2 - retour->boundingRect().width()/2,400);
     connect(retour, SIGNAL(clicked()), this, SLOT(retourAffich()));
 
     //specifier les variables qu'il sont non utilise
@@ -144,21 +161,18 @@ void Jeu::afficherPause()
 
     //creer les boutons
     Button* commancer = new Button("COMMANCER", 150, 40, pauseText);
-    commancer->setPos(100,140);
+    commancer->setPos(pauseText->boundingRect().width()/2 - commancer->boundingRect().width()/2,140);
     connect(commancer, SIGNAL(clicked()), this, SLOT(commancer()) );
-    Button* recommancer = creerStg("Recommancer", 150, 40, 100, 170, 0, true, pauseText);
+    Button* recommancer = creerStg("RECOMMANCER", 150, 40, pauseText->boundingRect().width()/2 - commancer->boundingRect().width()/2, 200, 0, true, pauseText);
 
     //bouton de routeur
-    Button* routeur = new Button("<< RETOUR", 100, 50, pauseText);
-    int rx = 20;
-    int ry = 400;
-    routeur->setPos(rx,ry);
-    connect(routeur, SIGNAL(clicked()), this, SLOT(choix()) );
+    Button* retour = new Button("<< RETOUR", 100, 50, pauseText);
+    retour->setPos(pauseText->boundingRect().width()/2 - retour->boundingRect().width()/2,400);
+    connect(retour, SIGNAL(clicked()), this, SLOT(choix()) );
 
     Q_UNUSED(recommancer);
-    Q_UNUSED(routeur);
+    Q_UNUSED(retour);
 }
-
 
 void Jeu::debut()
 {
@@ -192,7 +206,7 @@ void Jeu::finJeu()
 {
     background_music->stopMusic();
     findejeu_music->playMusic();
-    afficherFin("Fin De Jeu", "ReJeouer");
+    afficherFin("Fin De Jeu", "REJOUER");
     sceneDeJeu->removeItem(serp);
     serp = NULL;
 }
@@ -215,14 +229,10 @@ void Jeu::choix()
     choixText = creertext("WARNING", "arial", Qt::white);
 
     Button* oui = new Button("OUI", 50, 50, choixText);
-    int rx = 30;
-    int ry = 100;
-    oui->setPos(rx,ry);
+    oui->setPos(100, 100);
     connect(oui, SIGNAL(clicked()), this, SLOT(routeurMenu()) );
     Button* non = new Button("NON", 50, 50, choixText);
-    int nx = 100;
-    int ny = 100;
-    non->setPos(nx,ny);
+    non->setPos(200, 100);
     connect(non, SIGNAL(clicked()), this, SLOT(afficherPause()) );
 }
 
@@ -237,7 +247,7 @@ void Jeu::retourAffich()
     titreText = textremove(titreText);
 
     background_music->stopMusic();
-    afficherMenu("Jeu Serpent ", "Jouer");
+    afficherMenu("Jeu Serpent ", "JOUER");
 
 }
 
@@ -266,8 +276,13 @@ void Jeu::routeurMenu()
         delete titreText;
         titreText = NULL;
     }
+    if(victoireText != NULL){
+        sceneDeJeu->removeItem(victoireText);
+        delete victoireText;
+        victoireText = NULL;
+    }
     background_music->stopMusic();
-    afficherMenu("Jeu Serpent ", "Jouer");
+    afficherMenu("Jeu Serpent ", "JOUER");
 }
 
 
@@ -282,11 +297,11 @@ void Jeu::creerObs(int NumObs)
 
     //creer les obstacles
     if(NumObs != 0 && obs == NULL){
-    obs = new Obstacles(NumObs);
-    sceneDeJeu->addItem(obs);
-    background->setPixmap(QPixmap(obs->bg).scaled(1200,600));
-    background->setZValue(0);
-    sceneDeJeu->addItem(background);
+        obs = new Obstacles(NumObs);
+        sceneDeJeu->addItem(obs);
+        background->setPixmap(QPixmap(obs->bg).scaled(1200,600));
+        background->setZValue(0);
+        sceneDeJeu->addItem(background);
     }
     //debut de stage
     debut();
@@ -324,13 +339,11 @@ void Jeu::stageSuiv()
         delete obs;
         obs = NULL;
     }
-    creerObs(StageCourant);
+//    if(StageCourant <= 5)
+        creerObs(StageCourant);
+//    else
+//        afficherVictoire();
 }
-
-
-
-
-
 
 QGraphicsTextItem* Jeu::textremove(QGraphicsTextItem *text)
 {
@@ -348,9 +361,7 @@ QGraphicsTextItem *Jeu::creertext(QString titre, QString font, Qt::GlobalColor c
     QFont titreFont(font, 50 );
     text->setFont(titreFont);
     text->setDefaultTextColor(couleur);
-    int xPos = width()/2 - text->boundingRect().width()/2;
-    int yPos = 50;
-    text->setPos(xPos, yPos);
+    text->setPos(width()/2 - text->boundingRect().width()/2, 100);
     sceneDeJeu->addItem(text);
 
     return text;

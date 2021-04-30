@@ -26,6 +26,7 @@ public:
     QGraphicsTextItem* pauseText = NULL;
     QGraphicsTextItem* choixText = NULL;
     QGraphicsTextItem* stagesText = NULL;
+    QGraphicsTextItem* victoireText = NULL;
 
     qreal m_opacityFactor;
     QPropertyAnimation * m_opacityAnimation;
@@ -46,6 +47,7 @@ public:
     void keyPressEvent(QKeyEvent *event);
     void afficherMenu(QString titre, QString jouer);
     void afficherFin(QString titre, QString jouer);
+    void afficherVictoire();
     void finJeu();
 private:
     QGraphicsPixmapItem* background;
