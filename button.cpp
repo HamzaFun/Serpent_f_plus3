@@ -84,7 +84,6 @@ void Button::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
     //change color
     if(event){
         hovered = true;
-
         update();
     }
 }
@@ -101,17 +100,17 @@ void Button::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
 void Button::deletelock()
 {
     if(locke != NULL){
-    delete locke;
-    locke = NULL;
+        delete locke;
+        locke = NULL;
     }
 }
 
 void Button::setHoverd()
 {
     if(locke != NULL){
-    setOpacity(80);
-    setAcceptedMouseButtons(Qt::NoButton);
-    setAcceptHoverEvents(false);
+        setOpacity(80);
+        setAcceptedMouseButtons(Qt::NoButton);
+        setAcceptHoverEvents(false);
     }
     else{
         setOpacity(100);
@@ -130,6 +129,19 @@ void Button::setDecor(QPainter* painter)
     switch(type){
     case Button::Buttontype::menu :
         pen.setWidth(4);
+        path->addRoundedRect(boundingRect(), 20,20);
+        brush.setColor(QColor("#240b36"));
+        pen.setColor(Qt::white);
+        brush.setStyle(Qt::SolidPattern);
+        if(hovered){
+            pen.setWidth(2);
+//            pen.setColor(Qt::white);
+            brush.setColor(QColor("#240bf6"));
+            setCursor(QCursor(Qt::PointingHandCursor));
+        }
+        break;
+    case Button::Buttontype::stage :
+        pen.setWidth(3);
         path->addRoundedRect(boundingRect(), 20,20);
         brush.setColor(QColor("#240b36"));
         pen.setColor(Qt::white);

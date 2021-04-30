@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     jeu = new Jeu();
     jeu->show();
-    jeu->afficherMenu("Jeu Serpent ", "Jouer");
+    jeu->afficherMenu("Jeu Serpent ", "JOUER");
 
     return a.exec();
 }
