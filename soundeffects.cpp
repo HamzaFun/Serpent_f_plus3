@@ -5,10 +5,24 @@ SoundEffects::SoundEffects(QObject *parent) : QObject(parent)
 {
     coin_1 = new QMediaPlayer();
     coin_1->setMedia(QUrl(dir+"coin.wav"));
-    connect(this, SIGNAL(coin1()), this, SLOT(coin1s()));
     coin_2 = new QMediaPlayer();
     coin_2->setMedia(QUrl(dir+"coin1.wav"));
-    connect(this, SIGNAL(coin2()), this, SLOT(coin2s()));
+    click_1 = new QMediaPlayer();
+    click_1->setMedia(QUrl(dir+"coin1.wav"));
+    selfCollid = new QMediaPlayer();
+    selfCollid->setMedia(QUrl(dir+"lose1.wav"));
+
+    connect(this, SIGNAL(trigger(QMediaPlayer*)), this, SLOT(playMedia(QMediaPlayer*)));
+}
+
+void SoundEffects::playMedia(QMediaPlayer *media)
+{
+    if (media->state() == QMediaPlayer::PlayingState) {
+        media->setPosition(0);
+    }else if (media->state() == QMediaPlayer::StoppedState)
+    {
+        media->play();
+    }
 }
 
 void SoundEffects::coin1s()

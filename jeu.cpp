@@ -60,7 +60,7 @@ void Jeu::afficherFin(QString titre, QString jouer)
 {
     titreText = creertext(titre, "baloo 2", Qt::black);
 
-    Button* joue = creerStg(jouer, 150, 40, titreText->boundingRect().width()/2 - 75, 170, 0, true, titreText);
+    Button* joue = creerBtn(jouer, 150, 40, titreText->boundingRect().width()/2 - 75, 170, true, titreText);
     Button* quit = new Button("<< RETOUR", 150, 40, titreText);
     int rx = titreText->boundingRect().width()/2 - quit->boundingRect().width()/2;
     int ry = 220;
@@ -90,8 +90,8 @@ void Jeu::afficherMenu(QString titre, QString jouer)
 
     connect(menu, SIGNAL(clicked()), this, SLOT(afficherStages()));
 
-    Button* joue = creerStg(jouer, 150, 40, titreText->boundingRect().width()/2 - 75, 170, 0, true, titreText);
-    Button* quit = creerStg("QUIT", 150, 40, titreText->boundingRect().width()/2 - 75, 220, 0, false, titreText);
+    Button* joue = creerBtn(jouer, 150, 40, titreText->boundingRect().width()/2 - 75, 170, true, titreText);
+    Button* quit = creerBtn("QUIT", 150, 40, titreText->boundingRect().width()/2 - 75, 220, false, titreText);
 
     Q_UNUSED(joue);
     Q_UNUSED(quit);
@@ -111,15 +111,15 @@ void Jeu::afficherStages()
 
     //creer les bouttons des stages
     int x = 60;
-    Button* stage = creerStg("1", 50, 50, 0,100, 1, true, stagesText);
-    Button* stage2 = creerStg("2", 50, 50, x ,100, 2, true, stagesText);
-    Button* stage3 = creerStg("3", 50, 50, 100,100, 3, true, stagesText);
-    Button* stage4 = creerStg("4", 50, 50, 175,100, 4, true, stagesText);
-    Button* stage5 = creerStg("5", 50, 50, 250,100, 5, true, stagesText);
+    Button* stage = creerStg("1", 50, 50, 0,100, 1, stagesText);
+    Button* stage2 = creerStg("2", 50, 50, x ,100, 2, stagesText);
+    Button* stage3 = creerStg("3", 50, 50, 100,100, 3, stagesText);
+    Button* stage4 = creerStg("4", 50, 50, 175,100, 4, stagesText);
+    Button* stage5 = creerStg("5", 50, 50, 250,100, 5, stagesText);
 
 
 
-    //bouuton de routeur
+    //bouton de routeur
     Button* retour = new Button("<< RETOUR", 100, 50, stagesText);
     int rx = stagesText->boundingRect().width()/2 - retour->boundingRect().width()/2;
     int ry = 400;
@@ -146,7 +146,7 @@ void Jeu::afficherPause()
     Button* commancer = new Button("COMMANCER", 150, 40, pauseText);
     commancer->setPos(100,140);
     connect(commancer, SIGNAL(clicked()), this, SLOT(commancer()) );
-    Button* recommancer = creerStg("Recommancer", 150, 40, 100, 170, 0, true, pauseText);
+    Button* recommancer = creerBtn("Recommancer", 150, 40, 100, 170, true, pauseText);
 
     //bouton de routeur
     Button* routeur = new Button("<< RETOUR", 100, 50, pauseText);
@@ -292,27 +292,31 @@ void Jeu::creerObs(int NumObs)
     debut();
 }
 
-Button* Jeu::creerStg(QString text, int w, int h, int xpos, int ypos, int stg, bool debut, QGraphicsTextItem *pere)
+Button* Jeu::creerStg(QString text, int w, int h, int xpos, int ypos, int stg, QGraphicsTextItem *pere)
 {
     Button* button;
-    if(stg != 0) {
-        button = new Button(text, w, h, stg, pere);
-        if(stg <= StageCourant){
-            button->deletelock();
-        }
-        button->setHoverd();
-        connect(button, SIGNAL(clicked(int)),this,SLOT(creerObs(int)));
+//    if(stg != 0) {
+    button = new Button(text, w, h, stg, pere);
+    if(stg <= StageCourant){
+        button->deletelock();
     }
-    else if(debut)
+    button->setHoverd();
+    connect(button, SIGNAL(clicked(int)),this,SLOT(creerObs(int)));
+//    }
+    button->setPos( xpos, ypos);
+    return button;
+}
+
+Button *Jeu::creerBtn(QString text, int w, int h, int xpos, int ypos, bool debut, QGraphicsTextItem *pere)
+{
+    Button* button = new Button(text, w, h, pere);
+    if(debut)
     {
-        button = new Button(text, w, h, pere);
         connect(button, SIGNAL(clicked(int)),this,SLOT(debut()));
     }
     else {
-        button = new Button(text, w, h, pere);
         connect(button, SIGNAL(clicked(int)),this,SLOT(close()));
     }
-
     button->setPos( xpos, ypos);
     return button;
 }

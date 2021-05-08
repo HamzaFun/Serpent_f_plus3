@@ -74,9 +74,9 @@ void SerpPart::move()
     premier++;
     if(this->Suiv()!= NULL)
         direction = this->Suiv()->direction;
+    setImage();
     if(part == "HEAD")
         checkCollidingObject();
-    setImage();
 }
 
 void SerpPart::ajouterDerrier()
@@ -120,11 +120,11 @@ void SerpPart::checkCollidingObject()
                 jeu->score->setScore(jeu->score->getScore()+ f->score);
                 delete f;
                 if(jeu->score->getScore() == l){
-                    emit jeu->sfx->coin2();
+                    emit jeu->sfx->trigger(jeu->sfx->coin_2);
                     emit mangerF();
                     l += 5;
                 }else{
-                    emit jeu->sfx->coin1();
+                    emit jeu->sfx->trigger(jeu->sfx->coin_1);
                     emit manger();
                 }
                 if(jeu->obs != NULL){
@@ -139,8 +139,10 @@ void SerpPart::checkCollidingObject()
         }
         else if(coll[i]) {
             if(typeid(*coll[i])== typeid(SerpPart) || typeid(*coll[i]) == typeid (MurPart))
+            {
+                emit jeu->sfx->trigger(jeu->sfx->selfCollid);
                 jeu->finJeu();
-
+            }
             return;
 
         }
@@ -149,53 +151,57 @@ void SerpPart::checkCollidingObject()
 
 void SerpPart::setImage()
 {
+    QString path = ":/skins/"+ image;
     if(part == "HEAD"){
 
         if(direction == "UP"){
-          setPixmap(QPixmap(QString(":/skins/%1headup.png").arg(image)).scaled(40,40));
+            path +=  "headup.png";
         }else if(direction == "DOWN"){
-           setPixmap(QPixmap(QString(":/skins/%1headDown.png").arg(image)).scaled(40,40));
+            path += "headDown.png";
         }else if(direction == "LEFT"){
-            setPixmap(QPixmap(QString(":/skins/%1headLeft.png").arg(image)).scaled(40,40));
+            path += "headLeft.png";
         }else if(direction == "RIGHT"){
-            setPixmap(QPixmap(QString(":/skins/%1head.png").arg(image)).scaled(40,40/*,Qt::KeepAspectRatio*/));
+            setPixmap(QPixmap(QString(":/skins/%1head.png").arg(image)).scaled(40,40,Qt::KeepAspectRatio));
         }
         setZValue(2);
 
     }
     else if(part == "TAIL") {
         if(direction == "UP"){
-          setPixmap(QPixmap(QString(":/skins/%1tailUp.png").arg(image)).scaled(40,40));
+            path += "tailUp.png";
         }else if(direction == "DOWN"){
-           setPixmap(QPixmap(QString(":/skins/%1tailDown.png").arg(image)).scaled(40,40));
+            path += "tailDown.png";
         }else if(direction == "LEFT"){
-            setPixmap(QPixmap(QString(":/skins/%1tailLeft.png").arg(image)).scaled(40,40));
+            path += "tailLeft.png";
         }else if(direction == "RIGHT"){
-            setPixmap(QPixmap(QString(":/skins/%1tail.png").arg(image)).scaled(40,40));
+            path += "tail.png";
         }
     }
     else if (part == "PART"){
         if(direction == this->Preced()->Direction()){
         if(direction == "LEFT" ||direction ==  "RIGHT")
-            setPixmap(QPixmap(QString(":/skins/%1left-right.png").arg(image)).scaled(40,40));
+            path += "left-right.png";
         else if (direction == "UP" || direction == "DOWN")
-            setPixmap(QPixmap(QString(":/skins/%1up-down.png").arg(image)).scaled(40,40));
+                path += "up-down.png";
         }
         else{
             if((direction == "UP" && this->Preced()->Direction() == "LEFT")
                     || (direction == "RIGHT" && this->Preced()->Direction() == "DOWN"))
-                setPixmap(QPixmap(QString(":/skins/%1leftUp-downRight.png").arg(image)).scaled(40,40));
+                path += "leftUp-downRight.png";
             else if((direction == "UP" && this->Preced()->Direction() == "RIGHT")
                     || (direction == "LEFT" && this->Preced()->Direction() == "DOWN"))
-                setPixmap(QPixmap(QString(":/skins/%1rightUp-downLeft.png").arg(image)).scaled(40,40));
+                    path += "rightUp-downLeft.png";
             else if((direction == "LEFT" && this->Preced()->Direction() == "UP")
                     || (direction == "DOWN" && this->Preced()->Direction() == "RIGHT"))
-                setPixmap(QPixmap(QString(":/skins/%1upLeft-rightDown.png").arg(image)).scaled(40,40));
+                    path += "upLeft-rightDown.png";
             else
-                setPixmap(QPixmap(QString(":/skins/%1upRight-leftDown.png").arg(image)).scaled(40,40));
+                path += "upRight-leftDown.png";
 
         }
 
+    }
+    if(path != ":/skins/"+ image){
+        setPixmap(QPixmap(path).scaled(40,40));
     }
 }
 

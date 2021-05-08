@@ -50,7 +50,8 @@ public:
 private:
     QGraphicsPixmapItem* background;
     QMediaPlayer* creerMusic(QString music);
-    Button* creerStg(QString text, int w, int h, int xpos, int ypos, int stg, bool debut, QGraphicsTextItem* pere);
+    Button* creerStg(QString text, int w, int h, int xpos, int ypos, int stg, QGraphicsTextItem* pere);
+    Button* creerBtn(QString text, int w, int h, int xpos, int ypos, bool debut, QGraphicsTextItem* pere);
     QString font;
     QGraphicsTextItem* textremove(QGraphicsTextItem* text);
     QGraphicsTextItem* creertext(QString titre, QString font,Qt::GlobalColor couleur);
