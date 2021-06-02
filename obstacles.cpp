@@ -25,174 +25,182 @@ Obstacles::Obstacles(int Num,QGraphicsItem* parent):QGraphicsRectItem(parent)
         crearObs5();
         maxScore = 4;
         break;
+    case 6:
+        crearObs6();
+        maxScore = 4;
+        break;
+    case 7:
+        crearObs7();
+        maxScore = 4;
+        break;
+//    case 8:
+//        crearObs8();
+//        maxScore = 4;
+//        break;
+//    case 9:
+//        crearObs9();
+//        maxScore = 4;
+//        break;
+//    case 10:
+//        crearObs10();
+//        maxScore = 4;
+//        break;
     default:
         break;
     }
 
 }
 
-void Obstacles::ajouterMurPart(int x, int y)
+void Obstacles::ajouterMurPart(int x, int y, int scale)
 {
-    MurPart* part = new MurPart(NULL,this);
+    if(scale == 0) scale = 40;
+    MurPart* part = new MurPart(NULL, scale, this);
+    part->setOpacity(0.5);
     part->setPos(x,y);
 }
 
 void Obstacles::crearObs1()
 {
-    bg = ":/bg/bg/bg1.jpg";
-    MurPart* mur = new MurPart(NULL,this);
-    mur->setPos(0,0);
-    int s=40;
-    for(int i =0; i < 29; ++i){
-        ajouterMurPart(s,0);
-        s+=40;
+    int scale = 80;
+    bg = ":/bg/back1.png";
+    int s=80;
+    s=0;
+    for(int i =0; i < 8; ++i){
+        ajouterMurPart(0,   s, scale);
+        ajouterMurPart(1120, s, scale);
+        s+=80;
     }
-    s=40;
-    for(int i =0; i < 29; ++i){
-        ajouterMurPart(s,560);
-        s+=40;
-    }
-    s=40;
-    for(int i =0; i < 14; ++i){
-        ajouterMurPart(0,s);
-        s+=40;
-    }
-    s=40;
-    for(int i =0; i < 14; ++i){
-        ajouterMurPart(1160,s);
-        s+=40;
-    }
-
 }
 
 void Obstacles::crearObs2()
 {
-    bg = ":/bg/bg/bg2.png";
-    MurPart* mur = new MurPart(NULL,this);
-    mur->setPos(0,0);
-    int s=40;
-    for(int i =0; i < 29; ++i){
-        ajouterMurPart(s,0);
-        ajouterMurPart(s,560);
-        s+=40;
+    int scale = 80;
+    bg = ":/bg/back2.png";
+    int s=0;
+    for(int i =0; i < 15; ++i){
+        if(i < 6 || i > 8)
+            ajouterMurPart(s,0, scale);
+        s+=80;
     }
-    s=40;
+    s=80;
     for(int i =0; i < 4; ++i){
-        ajouterMurPart(0,s);
-        ajouterMurPart(1160,s);
-        s+=40;
+        ajouterMurPart(0,s, scale);
+        ajouterMurPart(1120,s, scale);
+        s+=80;
     }
-    s=400;
-    for(int i =0; i < 5; ++i){
-        ajouterMurPart(0,s);
-        ajouterMurPart(1160,s);
-        s+=40;
-    }
-    s=320;
-    for(int i =0; i < 14; ++i){
-        ajouterMurPart(s,160);
-        ajouterMurPart(s,400);
-        s+=40;
-    }
+
 }
 
 void Obstacles::crearObs3()
 {
-    bg = ":/bg/bg/bg2.png";
+    int scale = 80;
+    bg = ":/bg/back3.png";
     int s=0;
-    for(int i=0; i < 15; ++i){
-        ajouterMurPart(560,s);
-        s +=40;
+    for(int i=0; i < 8; ++i){
+        ajouterMurPart(400,s, scale);
+        s +=80;
     }
     s=0;
-    for(int i=0; i < 14; ++i){
-        ajouterMurPart(s,280);
-        s +=40;
+    for(int i=0; i < 4; ++i){
+        ajouterMurPart(800,s, scale);
+        s +=80;
     }
-    s=600;
-    for(int i=0; i < 15; ++i){
-        ajouterMurPart(s,280);
-        s +=40;
+    s=800;
+    for(int i=0; i < 5; ++i){
+        ajouterMurPart(s,320, scale);
+        s +=80;
     }
 }
 
 void Obstacles::crearObs4()
 {
-    bg = ":/bg/bg/bg1.jpg";
-    MurPart* mur = new MurPart(NULL,this);
-    mur->setPos(0,0);
+    int scale = 80;
+    bg = ":/bg/back4.png";
     int s=0;
-    for(int i =0; i < 15; ++i){
-        ajouterMurPart(560,s);
-        s+=40;
+    for(int i = 0; i < 5; ++i){
+        ajouterMurPart(560,s, scale);
+        s+=80;
     }
-    s=600;
-    for(int i =0; i < 15; ++i){
-        ajouterMurPart(s,0);
-        ajouterMurPart(s,560);
-        s+=40;
+    s=0;
+    for(int i = 0; i < 8; ++i){
+        ajouterMurPart(0,s, scale);
+        ajouterMurPart(1120,s, scale);
+        s+=80;
     }
-    s=40;
-    for(int i =0; i < 7; ++i){
-        ajouterMurPart(0,s);
-        ajouterMurPart(1160,s);
-        s+=40;
+    s=560;
+    for(int i = 0; i < 5; ++i){
+        ajouterMurPart(s,320, scale);
+        s+=80;
     }
-    s=120;
-    for(int i =0; i < 11; ++i){
-        ajouterMurPart(s,280);
-        s+=40;
-    }
-    s=600;
-    for(int i =0; i < 12; ++i){
-        ajouterMurPart(s,280);
-        s+=40;
+    s=0;
+    for(int i = 0; i < 3; ++i){
+        ajouterMurPart(880,s, scale);
+        s+=80;
     }
 }
 
 void Obstacles::crearObs5()
 {
-    bg = ":/bg/bg/bg3.jpg";
-    MurPart* mur = new MurPart(NULL,this);
-    mur->setPos(0,0);
-    int s=40;
-    for(int i =0; i < 13; i++){
-        ajouterMurPart(s,0);
-        s+=40;
+    int scale = 80;
+    bg = ":/bg/back5.png";
+    int s=0;
+    for(int i =0; i < 8; ++i){
+        ajouterMurPart(0,s, scale);
+        s+=80;
     }
     s=0;
-    for(int i =0; i < 14; i++){
-        ajouterMurPart(s,560);
-        s+=40;
+    for(int i =0; i < 9; ++i){
+        ajouterMurPart(s,240, scale);
+        s+=80;
+    }
+    s=80*7;
+    for(int i =0; i < 9; ++i){
+        ajouterMurPart(s,0, scale);
+        ajouterMurPart(s,520, scale);
+        s+=80;
+    }
+}
+
+void Obstacles::crearObs6()
+{
+    int scale = 80;
+    bg = ":/bg/back6.png";
+    int s=0;
+
+    for(int i =0; i < 6; ++i){
+        ajouterMurPart(480,s+160, scale);
+        ajouterMurPart(0,s+80, scale);
+        ajouterMurPart(960,s, scale);
+        ajouterMurPart(720,s, scale);
+        ajouterMurPart(240,s, scale);
+        s+=80;
+    }
+    ajouterMurPart(720,440, scale);
+    ajouterMurPart(240,440, scale);
+    ajouterMurPart(240,520, scale);
+    ajouterMurPart(0,520, scale);
+}
+
+void Obstacles::crearObs7()
+{
+    int scale = 80;
+    bg = ":/bg/back7.png";
+    int s=0;
+    for(int i = 0; i < 3; i++){
+        ajouterMurPart(s,0, scale);
+        ajouterMurPart(960+s,0, scale);
+        ajouterMurPart(s,520, scale);
+        ajouterMurPart(960+s,520, scale);
+        s+=80;
     }
     s=0;
-    for(int i =0; i < 30; i++){
-        ajouterMurPart(s,240);
-        s+=40;
+    for(int i =0; i < 8; ++i){
+        ajouterMurPart(560, s, scale);
+        s+=80;
     }
     s=0;
-    for(int i =0; i < 5; i++){
-        ajouterMurPart(s,360);
-        s+=40;
-    }
-    s=320;
-    for(int i =0; i < 22; i++){
-        ajouterMurPart(s,360);
-        s+=40;
-    }
-    s=0;
-    for(int i =0; i < 4; i++){
-        ajouterMurPart(560,s);
-        s+=40;
-    }
-    s=280;
-    for(int i =0; i < 2; i++){
-        ajouterMurPart(560,s);
-        s+=40;
-    }
-    s=400;
-    for(int i =0; i < 5; i++){
-        ajouterMurPart(560,s);
-        s+=40;
+    for(int i =0; i < 15; ++i){
+        ajouterMurPart(s,  240, scale);
+        s+=80;
     }
 }

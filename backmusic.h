@@ -9,9 +9,10 @@ class BackMusic : public QObject
 public:
     BackMusic(QObject* parent=0);
 
-    Music* background_music;
+    Music* jeu_music;
     Music* menu_music;
     Music* findejeu_music;
+    void stopAll();
 };
 
 #endif // BACKMUSIC_H

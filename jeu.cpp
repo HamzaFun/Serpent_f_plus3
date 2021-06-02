@@ -2,10 +2,12 @@
 #include "jeu.h"
 #include "murpart.h"
 #include "obstacles.h"
+#include "page.h"
 
 #include <QDebug>
 #include <QGraphicsItem>
 #include <QGraphicsPixmapItem>
+#include <QGraphicsTextItem>
 #include <QKeyEvent>
 #include <QMediaPlaylist>
 #include <QPushButton>
@@ -13,12 +15,13 @@
 #include <QTimer>
 
 Jeu::Jeu(QWidget *parent):QGraphicsView(parent)
-, font("baloo 2")
+, font("nickname demo")
 {
     // charger la vue :
     setFixedSize(1200,600);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setRenderHint(QPainter::Antialiasing);
     // charger la scene de jeu
     sceneDeJeu = new QGraphicsScene(this);
     background = new QGraphicsPixmapItem();
@@ -26,204 +29,319 @@ Jeu::Jeu(QWidget *parent):QGraphicsView(parent)
     sceneDeJeu->setSceneRect(0,0,1200,600);
     setScene(sceneDeJeu);
     background->setZValue(0);
-
+    millieu_scene = QPointF(600,300);
+    debut_scene = QPointF(50, 500);
     //initialiser la music
-    background_music = new Music("ingame_music1.mp3", this);
-    menu_music = new Music("menu_music2.mp3", this);
-    findejeu_music = new Music("gameover_music.mp3");
+    back_music = new BackMusic(this);
+//    background_music = new Music("ingame_music1.mp3", this);
+//    menu_music = new Music("menu_music2.mp3", this);
+//    findejeu_music = new Music("gameover_music.mp3");
     //initialiser le score
     score =new Score();
-    sceneDeJeu->addItem(score);
+    peau = "";
 
-    m_opacityAnimation = new QPropertyAnimation(this);
-    m_opacityAnimation->setTargetObject(this);
-    m_opacityAnimation->setPropertyName("opacityFactor");
-    m_opacityAnimation->setStartValue(0);
-    m_opacityAnimation->setEndValue(1);
-    m_opacityAnimation->setDuration(800);
-    m_opacityAnimation->setEasingCurve(QEasingCurve::OutBounce);
+    creerToutPages();
 
-    serp2 =NULL;
     serp = NULL;
     StageCourant = 1;
+    StageAttendue = 1;
 }
 
 void Jeu::keyPressEvent(QKeyEvent *event)
 {
     if(serp){
         serp->keyPressEvent(event);
-    }else
+    }else{
         QGraphicsView::keyPressEvent(event);
+    }
+    if((event->key() == Qt::Key_Space || event->key() == Qt::LeftButton) && finTextPage != NULL){
+        if(finTextPage->opacity() == 1)
+            afficherMenu();
+    }
 
 }
-void Jeu::afficherFin(QString titre, QString jouer)
+void Jeu::afficherFin()
 {
-    titreText = creertext(titre, "baloo 2", Qt::black);
+    fadeOutAll();
+    finPage->fadeIn();
+    if(!sceneDeJeu->items().contains(finPage)){      
+        int rx = millieu_scene.x() - 75 - debut_scene.x();
+        if(topScore < score->getScore()) topScore = score->getScore();
+        finPage->creerText("TOP SCORE :", rx+30, millieu_scene.y() - 80,font,35,Qt::yellow );
+        finPage->creerText(QString::number(topScore), rx+180, millieu_scene.y() - 80,font,35,Qt::yellow );
+        Button* rejoue = creerBtn("REJOUER", 150, 40, rx , millieu_scene.y() - 20, true, finPage);
+        Button* quit = new Button("RETOUR", 150, 40, Button::Buttontype::retour, finPage);
+        int ry =  debut_scene.y();
+        quit->setPos(rx,ry);
+        connect(quit, SIGNAL(clicked()), this, SLOT(retourMenu()));
+        sceneDeJeu->addItem(finPage);
+        Q_UNUSED(rejoue);
+        Q_UNUSED(quit);
+    }
+}
 
-    Button* joue = creerBtn(jouer, 150, 40, titreText->boundingRect().width()/2 - 75, 170, true, titreText);
-    Button* quit = new Button("<< RETOUR", 150, 40, titreText);
-    int rx = titreText->boundingRect().width()/2 - quit->boundingRect().width()/2;
-    int ry = 220;
-    quit->setPos(rx,ry);
-    connect(quit, SIGNAL(clicked()), this, SLOT(routeurMenu()));
+void Jeu::afficherNext()
+{
+    fadeOutAll();
+    nextStgPage->fadeIn();
+    serp->t->stop();
+//    suprimerItem(serp);
+//    serp = NULL;
+    if(StageAttendue == StageCourant ){
+        StageAttendue++;
+    }
 
-    Q_UNUSED(joue);
-    Q_UNUSED(quit);
+    if(!sceneDeJeu->items().contains(nextStgPage)){
+        int nx = millieu_scene.x() + 30 - debut_scene.x();
+        int ny = millieu_scene.y() - 20;
+        nextStgPage->creerText("VOTRE SCORE :", nx-55, ny-60,font,35,Qt::yellow );
+        nextStgPage->creerText(QString::number(score->getScore()), nx+95, ny-60,font,35,Qt::yellow );
+        Button* rejouer = creerBtn("REJOUER", 150, 40, millieu_scene.x() - 180 - debut_scene.x() , ny, true, nextStgPage);
+        Button* next = new Button("NEXT", 150, 40, Button::Buttontype::menu, nextStgPage);
+        next->setPos(nx,ny);
+        connect(next, SIGNAL(clicked(int)), this, SLOT(creerObs(int)));
+        Button* retour = new Button("RETOUR", 150, 40, Button::Buttontype::retour, nextStgPage);
+        int rx = millieu_scene.x() - 75 - debut_scene.x();
+        int ry = debut_scene.y();
+        retour->setPos(rx,ry);
+        connect(retour, SIGNAL(clicked()), this, SLOT(retourMenu()));
+        sceneDeJeu->addItem(nextStgPage);
+        Q_UNUSED(rejouer);
+        Q_UNUSED(next);
+    }
+
 
 }
-void Jeu::afficherMenu(QString titre, QString jouer)
-{
-    findejeu_music->stopMusic();
-    background_music->stopMusic();
-    menu_music->playMusic();
 
+void Jeu::afficherMenu()
+{
+    back_music->jeu_music->stopMusic();
+    back_music->findejeu_music->stopMusic();
+    back_music->menu_music->playMusic();
+
+    fadeOutAll();
     background->setPixmap(QPixmap(":/bg/imageMenu.jpg").scaled(1200,600));
-    sceneDeJeu->addItem(background);
-    titreText = creertext(titre, "baloo 2", Qt::white);
-    if(m_opacityAnimation->state() == QAbstractAnimation::Stopped)
-        m_opacityAnimation->start();
+    if(!sceneDeJeu->items().contains(background)){
+        sceneDeJeu->addItem(background);
+    }
+    if(!sceneDeJeu->items().contains(menuPage)){
+        Button* stages = new Button("STAGES", 150,40,Button::Buttontype::menu, menuPage);
+        int mxPos = debut_scene.x() ;
+        int myPos = 200;
+        stages->setPos(mxPos,myPos);
+        connect(stages, SIGNAL(clicked()), this, SLOT(afficherStages()));
 
-    Button* menu = new Button("STAGES", 150,40, titreText);
-    int mxPos = titreText->boundingRect().width()/2 - menu->boundingRect().width()/2 ;
-    int myPos = 120;
-    menu->setPos(mxPos,myPos);
+        Button* info = new Button("!", 40,40,Button::Buttontype::menu, menuPage);
+        info->setPos(1100,10);
+        connect(info, SIGNAL(clicked()), this, SLOT(afficherInfo()));
 
-    connect(menu, SIGNAL(clicked()), this, SLOT(afficherStages()));
+        Button* peau = new Button("Choisir Votre Serpent", 350,40,Button::Buttontype::menu, menuPage);
+        int pxPos = 780 ;
+        int pyPos = 540 ;
 
-    Button* joue = creerBtn(jouer, 150, 40, titreText->boundingRect().width()/2 - 75, 170, true, titreText);
-    Button* quit = creerBtn("QUIT", 150, 40, titreText->boundingRect().width()/2 - 75, 220, false, titreText);
+        peau->setPos(pxPos,pyPos);
+        connect(peau, SIGNAL(clicked()), this, SLOT(afficherPeau()));
 
-    Q_UNUSED(joue);
-    Q_UNUSED(quit);
-
+        Button* joue = creerBtn("JOUER", 150, 40,  mxPos + 40, myPos + 60, true, menuPage);
+        Button* quit = creerBtn("QUIT", 150, 40,  mxPos + 80, myPos + 120, false, menuPage);
+            sceneDeJeu->addItem(menuPage);
+        Q_UNUSED(joue);
+        Q_UNUSED(info);
+        Q_UNUSED(quit);
+    }
+    menuPage->fadeIn();
 }
 
 void Jeu::afficherStages()
 {
-    //supprimer les textes precedents
-    titreText = textremove(titreText);
-
-    //creer texte de stages menu
-    stagesText = creertext("STAGES", font, Qt::white);
-    if(m_opacityAnimation->state() == QAbstractAnimation::Stopped)
-        m_opacityAnimation->start();
-
+    fadeOutAll();
+    stagesPage->fadeIn();
 
     //creer les bouttons des stages
-    int x = 60;
-    Button* stage = creerStg("1", 50, 50, 0,100, 1, stagesText);
-    Button* stage2 = creerStg("2", 50, 50, x ,100, 2, stagesText);
-    Button* stage3 = creerStg("3", 50, 50, 100,100, 3, stagesText);
-    Button* stage4 = creerStg("4", 50, 50, 175,100, 4, stagesText);
-    Button* stage5 = creerStg("5", 50, 50, 250,100, 5, stagesText);
-
-
+    if(!sceneDeJeu->items().contains(stagesPage)){
+    int x = 160 ;
+    int y = 100;
+    int h = 150;
+    Button* stage = creerStg("DEBUT", h, h, 175,y, 1, stagesPage);
+    Button* stage2 = creerStg("CHAMBRE", h, h, x +175 ,  y, 2, stagesPage);
+    Button* stage3 = creerStg("3", h, h, 2*x +175, y, 3, stagesPage);
+    Button* stage4 = creerStg("4", h, h, 3*x +175, y, 4, stagesPage);
+    Button* stage5 = creerStg("5", h, h, 4*x +175, y, 5, stagesPage);
+    Button* stage6 = creerStg("6", h, h, 175    ,3*y, 6, stagesPage);
+    Button* stage7 = creerStg("7", h, h, x+175  ,3*y, 7, stagesPage);
+    Button* stage8 = creerStg("8", h, h, 2*x+175,3*y, 8, stagesPage);
 
     //bouton de routeur
-    Button* retour = new Button("<< RETOUR", 100, 50, stagesText);
-    int rx = stagesText->boundingRect().width()/2 - retour->boundingRect().width()/2;
-    int ry = 400;
+    Button* retour = new Button("<< RETOUR", 140, 50, Button::Buttontype::retour, stagesPage);
+    int rx = debut_scene.x();
+    int ry = debut_scene.y();
     retour->setPos(rx,ry);
-    connect(retour, SIGNAL(clicked()), this, SLOT(retourAffich()));
-
+    connect(retour, SIGNAL(clicked()), this, SLOT(retourMenu()));
+        sceneDeJeu->addItem(stagesPage);
     //specifier les variables qu'il sont non utilise
     Q_UNUSED(stage);
     Q_UNUSED(stage2);
     Q_UNUSED(stage3);
     Q_UNUSED(stage4);
     Q_UNUSED(stage5);
+    Q_UNUSED(stage6);
+    Q_UNUSED(stage7);
+    Q_UNUSED(stage8);
+    }
 }
 
 void Jeu::afficherPause()
 {
-    //supprimer les textes precedents
-    choixText = textremove(choixText);
-
+    fadeOutAll();
+    pausePage = new Page("PAUSE", font, Qt::white);
     //creer le text de pause
-    pauseText = creertext("PAUSE", "arial", Qt::white);
-
+    pausePage->fadeIn();
     //creer les boutons
-    Button* commancer = new Button("COMMANCER", 150, 40, pauseText);
-    commancer->setPos(100,140);
-    connect(commancer, SIGNAL(clicked()), this, SLOT(commancer()) );
-    Button* recommancer = creerBtn("Recommancer", 150, 40, 100, 170, true, pauseText);
+    if(!sceneDeJeu->items().contains(pausePage)){
 
-    //bouton de routeur
-    Button* routeur = new Button("<< RETOUR", 100, 50, pauseText);
-    int rx = 20;
-    int ry = 400;
-    routeur->setPos(rx,ry);
-    connect(routeur, SIGNAL(clicked()), this, SLOT(choix()) );
+        Button* commancer = new Button("COMMANCER", 200, 40,Button::Buttontype::menu, pausePage);
+        int x = millieu_scene.x() - commancer->boundingRect().width()/2 - debut_scene.x() ;
+        commancer->setPos(x, millieu_scene.y() - 20);
+        if(StageCourant < StageAttendue && StageCourant != 0){
+            Button* next = new Button("NEXT", 150, 40, Button::Buttontype::menu, pausePage);
+            next->setPos(millieu_scene.x() - debut_scene.x() - next->boundingRect().width()/2, millieu_scene.y() - 90);
+            connect(next, SIGNAL(clicked(int)), this, SLOT(creerObs(int)));
+        }
+        connect(commancer, SIGNAL(clicked()), this, SLOT(commancer()) );
+        Button* recommancer = creerBtn("RECOMMANCER", 200, 40, x , millieu_scene.y() + 60, true, pausePage);
 
-    Q_UNUSED(recommancer);
-    Q_UNUSED(routeur);
+        //bouton de routeur
+        Button* routeur = new Button("<< RETOUR", 160, 50, Button::Buttontype::retour, pausePage);
+        int rx = millieu_scene.x() - routeur->boundingRect().width()/2 - debut_scene.x();
+        int ry = debut_scene.y();
+        routeur->setPos(rx,ry);
+        connect(routeur, SIGNAL(clicked()), this, SLOT(choix()) );
+            sceneDeJeu->addItem(pausePage);
+        Q_UNUSED(recommancer);
+        Q_UNUSED(routeur);
+    }
+}
+
+void Jeu::afficherInfo()
+{
+    fadeOutAll(); infoPage->fadeIn();
+
+//    if(!sceneDeJeu->items().contains(commentjouer)){
+//        sceneDeJeu->addItem(commentjouer);
+//    }
+    if(!sceneDeJeu->items().contains(infoPage)){
+        QGraphicsPixmapItem * commentjouer = new QGraphicsPixmapItem(QPixmap(":/bg/comment.png").scaled(1200,600), infoPage);
+        commentjouer->setPos(-50,0);
+        infoPage->text->setPos(0,0);
+        Button* retour = new Button("<< RETOUR", 140, 50, Button::Buttontype::retour, infoPage);
+        int rx = debut_scene.x();
+        int ry = debut_scene.y();
+        retour->setPos(rx,ry);
+        connect(retour, SIGNAL(clicked()), this, SLOT(retourMenu()));
+        sceneDeJeu->addItem(infoPage);
+    }
+}
+
+void Jeu::afficherPeau()
+{
+    fadeOutAll(); peauPage->fadeIn();
+
+    if(!sceneDeJeu->items().contains(peauPage)){
+        int x = 160 ;
+        int y = 200;
+        int h = 150;
+        Button* defaut = new Button("DEFAULT", h, h, 0, peauPage);
+        defaut->setPos( 175, y);
+        defaut->deletelock();
+        connect(defaut, SIGNAL(clicked(QString)),this,SLOT(setPeau(QString)));
+        Button* kobra = new Button("KOBRA", h, h, 0, peauPage);
+        kobra->setPos( x+175, y);
+        kobra->deletelock();
+        connect(kobra, SIGNAL(clicked(QString)),this,SLOT(setPeau(QString)));
+        Button* jungle = new Button("JUNGLE", h, h, 0, peauPage);
+        jungle->setPos( 2*x+175, y);
+        jungle->deletelock();
+        connect(jungle, SIGNAL(clicked(QString)),this,SLOT(setPeau(QString)));
+        Button* spirit = new Button("SPIRIT", h, h, 0, peauPage);
+        spirit->setPos( 3*x+175, y);
+        spirit->deletelock();
+        connect(spirit, SIGNAL(clicked(QString)),this,SLOT(setPeau(QString)));
+
+        Button* retour = new Button("<< RETOUR", 140, 50, Button::Buttontype::retour, peauPage);
+        int rx = debut_scene.x();
+        int ry = debut_scene.y();
+        retour->setPos(rx,ry);
+        connect(retour, SIGNAL(clicked()), this, SLOT(retourMenu()));
+        sceneDeJeu->addItem(peauPage);
+    }
 }
 
 
 void Jeu::debut()
 {
     // controler la music
-    menu_music->stopMusic();
-    findejeu_music->stopMusic();
-    background_music->playMusic();
-
+    back_music->stopAll();
+    back_music->jeu_music->playMusic();
+    fadeOutAll();
+    deleteAllPages();
+    creerToutPages();
     if(obs == NULL ){
     background->setPixmap(QPixmap(":/bg/blackbg.jpg").scaled(1200,600));
     sceneDeJeu->addItem(background);
     }
 
     //initialiser le serpent
+    if(serp != NULL)
+    {
+        sceneDeJeu->removeItem(serp);
+        serp =NULL;
+    }
     serp = new AnimerSerpent();
     serp->setFlag(QGraphicsItem::ItemIsFocusable);
     serp->setFocus();
     sceneDeJeu->addItem(serp);
-    score->setVisible(true);
+
     score->setScore(0);
 
-    //supprimer les precedents texts creer avant le debut du stage courant
-    pauseText = textremove(pauseText);
-    titreText = textremove(titreText);
-    stagesText = textremove(stagesText);
-
-    if(serp2) serp2->deleteLater();
-    serp2 = serp;
+//    if(serp2) serp2->deleteLater();
+//    serp2 = serp;
 }
 void Jeu::finJeu()
 {
-    background_music->stopMusic();
-    findejeu_music->playMusic();
-    afficherFin("Fin De Jeu", "ReJeouer");
-    sceneDeJeu->removeItem(serp);
-    serp = NULL;
+    back_music->stopAll();
+    back_music->findejeu_music->playMusic();
+    serp->t->stop();
+    serp->setFlag(QGraphicsItem::ItemStopsClickFocusPropagation);
+    afficherFin();
 }
 
 void Jeu::commancer()
 {
-    if(!serp->t->isActive()){
-        serp->t->start(90);
-        titreText = textremove(titreText);
-        pauseText = textremove(pauseText);
-    }
+//    if(!serp->t->isActive()){
+    fadeOutAll();
+    suprimerItem(pausePage);
+    suprimerItem(choixPage);
+//    }
 
 }
 void Jeu::choix()
 {
-    //supprimer les textes precedents
-    titreText = textremove(titreText);
-    pauseText = textremove(pauseText);
+    fadeOutAll();
+    choixPage->fadeIn();
 
-    choixText = creertext("WARNING", "arial", Qt::white);
-
-    Button* oui = new Button("OUI", 50, 50, choixText);
-    int rx = 30;
-    int ry = 100;
-    oui->setPos(rx,ry);
-    connect(oui, SIGNAL(clicked()), this, SLOT(routeurMenu()) );
-    Button* non = new Button("NON", 50, 50, choixText);
-    int nx = 100;
-    int ny = 100;
-    non->setPos(nx,ny);
-    connect(non, SIGNAL(clicked()), this, SLOT(afficherPause()) );
+    if(!sceneDeJeu->items().contains(choixPage)){
+        Button* oui = new Button("OUI", 70, 70, Button::Buttontype::menu, choixPage);
+        int rx = millieu_scene.x() - oui->boundingRect().width() - debut_scene.x() -30;
+        int ry = millieu_scene.y() - oui->boundingRect().width()/2;
+        oui->setPos(rx,ry);
+        connect(oui, SIGNAL(clicked()), this, SLOT(retourMenu()) );
+        Button* non = new Button("NON", 70, 70, Button::Buttontype::menu, choixPage);
+        int nx = millieu_scene.x() + oui->boundingRect().width() - debut_scene.x() -20;
+        int ny = millieu_scene.y() - oui->boundingRect().width()/2;
+        non->setPos(nx,ny);
+        connect(non, SIGNAL(clicked()), this, SLOT(afficherPause()) );
+            sceneDeJeu->addItem(choixPage);
+    }
 }
 
 void Jeu::retourAffich()
@@ -233,149 +351,185 @@ void Jeu::retourAffich()
         delete obs;
         obs = NULL;
     }
-    stagesText = textremove(stagesText);
-    titreText = textremove(titreText);
+    suprimerItem(serp);
+    delete serp;
+    serp = NULL;
 
-    background_music->stopMusic();
-    afficherMenu("Jeu Serpent ", "Jouer");
+    afficherMenu();
 
 }
 
-void Jeu::routeurMenu()
+void Jeu::retourMenu()
 {
-    sceneDeJeu->removeItem(serp);
-    serp =NULL;
-    if(choixText != NULL)
-    {
-        sceneDeJeu->removeItem(choixText);
-        delete choixText;
-        choixText = NULL;
-    }
-    if(obs != NULL){
+    fadeOutAll();
+    suprimerItem(serp);
+    delete serp;
+    serp = NULL;
+    if(sceneDeJeu->items().contains(obs)){
         sceneDeJeu->removeItem(obs);
         delete obs;
         obs = NULL;
     }
-    if(pauseText != NULL){
-        sceneDeJeu->removeItem(pauseText);
-        delete pauseText;
-        pauseText = NULL;
-    }
-    if(titreText != NULL){
-        sceneDeJeu->removeItem(titreText);
-        delete titreText;
-        titreText = NULL;
-    }
-    background_music->stopMusic();
-    afficherMenu("Jeu Serpent ", "Jouer");
+    afficherMenu();
 }
 
+void Jeu::afficherGagner()
+{
+    fadeOutAll();
+    gagnerPage->fadeIn();
+    serp->t->stop();
+
+
+    if(!sceneDeJeu->items().contains(gagnerPage)){
+        int nx = millieu_scene.x() + 30 - debut_scene.x();
+        int ny = millieu_scene.y() - 20;
+        Button* rejouer = creerBtn("REJOUER", 150, 40, millieu_scene.x() - 180 - debut_scene.x() , ny, true, gagnerPage);
+        Button* fin = new Button("FIN", 150, 40, Button::Buttontype::menu, gagnerPage);
+        fin->setPos(nx,ny);
+        connect(fin, SIGNAL(clicked()), this, SLOT(afficherFinText()));
+        Button* retour = new Button("RETOUR", 150, 40, Button::Buttontype::retour, gagnerPage);
+        int rx = millieu_scene.x() - 75 - debut_scene.x();
+        int ry = debut_scene.y();
+        retour->setPos(rx,ry);
+        connect(retour, SIGNAL(clicked()), this, SLOT(retourMenu()));
+        sceneDeJeu->addItem(gagnerPage);
+        Q_UNUSED(rejouer);
+        Q_UNUSED(fin);
+    }
+}
+
+void Jeu::afficherFinText()
+{
+    back_music->stopAll();
+    back_music->menu_music->playMusic();
+    fadeOutAll();
+    finTextPage->fadeIn();
+    serp->t->stop();
+    suprimerItem(serp);
+    if(sceneDeJeu->items().contains(obs)){
+        sceneDeJeu->removeItem(obs);
+        delete obs;
+        obs = NULL;
+    }
+
+    if(!sceneDeJeu->items().contains(finTextPage)){
+        sceneDeJeu->addItem(finTextPage);
+//        connect(finTextPage->m_scrollAnimation, SIGNAL(finTextPage->m_scrollAnimation->finished()), this, SLOT(retourAffich()));
+    }
+}
+
+void Jeu::setPeau(QString val)
+{
+    peau = val;
+}
 
 void Jeu::creerObs(int NumObs)
 {
     //supprimer obstacles
-    if(obs != NULL){
+    if(sceneDeJeu->items().contains(obs)){
         sceneDeJeu->removeItem(obs);
         delete obs;
         obs = NULL;
     }
 
     //creer les obstacles
-    if(NumObs != 0 && obs == NULL){
-    obs = new Obstacles(NumObs);
-    sceneDeJeu->addItem(obs);
-    background->setPixmap(QPixmap(obs->bg).scaled(1200,600));
-    background->setZValue(0);
-    sceneDeJeu->addItem(background);
+    StageCourant = NumObs;
+    if(NumObs != 0 ){
+        obs = new Obstacles(NumObs);
+        sceneDeJeu->addItem(obs);
+        background->setPixmap(QPixmap(obs->bg).scaled(1200,600));
+        background->setZValue(0);
+        sceneDeJeu->addItem(background);
     }
     //debut de stage
     debut();
 }
 
-Button* Jeu::creerStg(QString text, int w, int h, int xpos, int ypos, int stg, QGraphicsTextItem *pere)
+Button *Jeu::creerStg(QString text, int w, int h, int xpos, int ypos, int stg, Page *pere)
 {
     Button* button;
-//    if(stg != 0) {
     button = new Button(text, w, h, stg, pere);
-    if(stg <= StageCourant){
+    if(stg <= StageAttendue){
         button->deletelock();
     }
     button->setHoverd();
     connect(button, SIGNAL(clicked(int)),this,SLOT(creerObs(int)));
-//    }
+
     button->setPos( xpos, ypos);
     return button;
 }
-
-Button *Jeu::creerBtn(QString text, int w, int h, int xpos, int ypos, bool debut, QGraphicsTextItem *pere)
+Button *Jeu::creerBtn(QString text, int w, int h, int xpos, int ypos, bool debut, Page *pere)
 {
-    Button* button = new Button(text, w, h, pere);
+    Button* button = new Button(text, w, h,Button::Buttontype::menu, pere);
     if(debut)
     {
-        connect(button, SIGNAL(clicked(int)),this,SLOT(debut()));
+        connect(button, SIGNAL(clicked()),this,SLOT(debut()));
     }
     else {
-        connect(button, SIGNAL(clicked(int)),this,SLOT(close()));
+        connect(button, SIGNAL(clicked()),this,SLOT(close()));
     }
     button->setPos( xpos, ypos);
     return button;
 }
 
-void Jeu::stageSuiv()
+void Jeu::suprimerItem(QGraphicsItem *item)
 {
-    if(obs != NULL){
-        sceneDeJeu->removeItem(obs);
-        delete obs;
-        obs = NULL;
+    if(sceneDeJeu->items().contains(item)){
+        sceneDeJeu->removeItem(item);
     }
-    creerObs(StageCourant);
 }
 
-
-
-
-
-
-QGraphicsTextItem* Jeu::textremove(QGraphicsTextItem *text)
+void Jeu::deleteAllPages()
 {
-    if(text != NULL){
-        sceneDeJeu->removeItem(text);
-        delete text;
-        text = NULL;
-    }
-    return text;
+    suprimerItem(menuPage);
+    suprimerItem(stagesPage);
+    suprimerItem(nextStgPage);
+    suprimerItem(choixPage);
+    suprimerItem(pausePage);
+    suprimerItem(finPage);
+    suprimerItem(gagnerPage);
+    suprimerItem(finTextPage);
+    suprimerItem(infoPage);
+    suprimerItem(peauPage);
 }
 
-QGraphicsTextItem *Jeu::creertext(QString titre, QString font, Qt::GlobalColor couleur)
+void Jeu::creerToutPages()
 {
-    QGraphicsTextItem* text = new QGraphicsTextItem(titre);
-    QFont titreFont(font, 50 );
-    text->setFont(titreFont);
-    text->setDefaultTextColor(couleur);
-    int xPos = width()/2 - text->boundingRect().width()/2;
-    int yPos = 50;
-    text->setPos(xPos, yPos);
-    sceneDeJeu->addItem(text);
-
-    return text;
+    menuPage = new Page("JEU SERPENT", font, Qt::white);
+    stagesPage = new Page("STAGES", font, Qt::white);
+    nextStgPage = new Page("FELICITATION", font, Qt::white);
+    choixPage = new Page("WARNING", font, Qt::red);
+    pausePage = new Page("PAUSE", font, Qt::white);
+    finPage = new Page("Fin De Jeu", font, Qt::white);
+    gagnerPage = new Page("Complete", font, Qt::yellow);
+    finTextPage = new Page("SERPENT PRO", font, "vrai", Qt::yellow);
+    infoPage = new Page("INFORMATIONS", font, Qt::white);
+    peauPage = new Page("LES PEAUS", font, Qt::white);
 }
 
-
-void Jeu::setOpacityFactor(qreal valeur)
+void Jeu::fadeOutAll()
 {
-    if(valeur == m_opacityFactor) return;
-        m_opacityFactor = valeur;
-    emit opacityFactorChanged(m_opacityFactor);
-    if(titreText != NULL){
-        titreText->setOpacity(m_opacityAnimation->currentValue().toReal());
-        titreText->setY(50 + m_opacityAnimation->currentValue().toReal() * 50);
-    }
-    if(stagesText != NULL)
-        stagesText->setOpacity(m_opacityAnimation->currentValue().toReal());
+    if(menuPage->opacity() != 0)
+        menuPage->fadeOut();
+    if(stagesPage->opacity() != 0)
+        stagesPage->fadeOut();
+    if(nextStgPage->opacity() != 0)
+        nextStgPage->fadeOut();
+    if(choixPage->opacity() != 0)
+        choixPage->fadeOut();
+    if(pausePage->opacity() != 0)
+        pausePage->fadeOut();
+    if(finPage->opacity() != 0)
+        finPage->fadeOut();
+    if(gagnerPage->opacity() != 0)
+        gagnerPage->fadeOut();
+    if(finTextPage->opacity() != 0)
+        finTextPage->fadeOut();
+    if(infoPage->opacity() != 0)
+        infoPage->fadeOut();
+    if(peauPage->opacity() != 0)
+        peauPage->fadeOut();
 }
 
-qreal Jeu::opacityFactor()
-{
-    return m_opacityFactor;
-}
+
 

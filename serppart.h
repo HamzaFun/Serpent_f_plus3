@@ -27,7 +27,6 @@ public:
     void setImage();
 
     static QString image;
-    static void setImage(QString valeur);
 
     int pas;
     int l=5;
@@ -36,10 +35,14 @@ private:
     SerpPart* suiv;
     SerpPart* preced;
     QString direction;
+public slots:
+    static void setImage(QString valeur);
+
 signals :
     void manger();
     void mangerF();
     void finStage();
+    void gagnerJeu();
 };
 
 #endif // SERPPART_H

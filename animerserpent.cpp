@@ -18,14 +18,15 @@ AnimerSerpent::AnimerSerpent(QGraphicsItem* parent):QGraphicsRectItem(parent)
     serpTete->setDirection("RIGHT");
     serpTete->part = "HEAD";
     serpTete->setImage();
-    serpTete->setImage("");
+    serpTete->setImage(jeu->peau);
     serpQueue = serpTete;
-    connect(serpTete, SIGNAL(finStage()), jeu, SLOT(stageSuiv()));
+    connect(serpTete, SIGNAL(finStage()), jeu, SLOT(afficherNext()));
+    connect(serpTete, SIGNAL(gagnerJeu()), jeu, SLOT(afficherGagner()));
     t = new QTimer();
     connect(t, SIGNAL(timeout()), this, SLOT(move()));
-    for(int i=0;i< 20;++i){
+//    for(int i=0;i< 20;++i){
     ajouterFruit();
-}
+//}
     eatSound = new QMediaPlayer();
     eatSound->setMedia(QUrl("qrc:/sounds/eat.wav"));
 
@@ -43,26 +44,27 @@ AnimerSerpent::AnimerSerpent(QGraphicsItem* parent):QGraphicsRectItem(parent)
 
     text = new QGraphicsTextItem(this);
     text->setVisible(true);
+    text->setDefaultTextColor(Qt::white);
     text->setPlainText("Puiez sur Espace pour continue");
     text->setPos(650,250);
     text->setFont(QFont("",14));
 
-
+    setZValue(1);
 }
 
 void AnimerSerpent::keyPressEvent(QKeyEvent *event)
 {
-    if(event->key() == Qt::Key_Down && serpTete->Direction() != "UP") {
+    if((event->key() == Qt::Key_Down || event->key() == Qt::Key_S ) && serpTete->Direction() != "UP") {
         direction = "DOWN";
     }
-    else if(event->key() == Qt::Key_Up &&serpTete->Direction()  != "DOWN") {
+    else if(( event->key() == Qt::Key_Up || event->key() == Qt::Key_W ) && serpTete->Direction()  != "DOWN") {
         direction = "UP";
     }
-    else if(event->key() == Qt::Key_Right && serpTete->Direction()  != "LEFT") {
+    else if(( event->key() == Qt::Key_Right || event->key() == Qt::Key_D ) && serpTete->Direction()  != "LEFT") {
             direction = "RIGHT";
 
     }
-    else if(event->key() == Qt::Key_Left && serpTete->Direction()  != "RIGHT" ) {
+    else if((event->key() == Qt::Key_Left || event->key() == Qt::Key_A ) && serpTete->Direction()  != "RIGHT" ) {
             direction = "LEFT";
     }
     else if(event->key() == Qt::Key_Space){
@@ -76,18 +78,17 @@ void AnimerSerpent::keyPressEvent(QKeyEvent *event)
         }
 
     }
-    else if( event->key() == Qt::Key_Escape){
+    else if( event->key() == Qt::Key_Escape && jeu->finPage->opacity() == 0 && jeu->nextStgPage->opacity() == 0){
         if(t->isActive()){
             t->stop();
-            jeu->afficherPause();
         }
+        if(jeu->pausePage->opacity() == 0 )
+            jeu->afficherPause();
         else{
-            t->start(90);
-            if(jeu->pauseText != NULL)
+            if(jeu->pausePage != NULL)
             {
-                jeu->sceneDeJeu->removeItem(jeu->pauseText);
-                delete jeu->pauseText;
-                jeu->pauseText = NULL;
+                jeu->pausePage->fadeOut();
+                jeu->suprimerItem(jeu->pausePage);
             }
         }
     }
@@ -135,13 +136,14 @@ void AnimerSerpent::ajouterFruit()
     Fruit* f1 = new Fruit("POMME", this);
     int x ;
     int y ;
+    int rand;
     int k=1;
     while(k != 0){
         k=0;
-
+    rand  = QRandomGenerator::global()->bounded(2);
     QList <QGraphicsItem* > coll = jeu->sceneDeJeu->items();
-    x = QRandomGenerator::global()->bounded(29) *40 ;
-    y = QRandomGenerator::global()->bounded(14) *40 ;
+    x = QRandomGenerator::global()->bounded(1200/80) *80 ;
+    y = QRandomGenerator::global()->bounded(8) *80 ;
 
     for(int i=0; i < coll.length(); ++i){
         if(coll[i]->pos().x() == x && coll[i]->pos().y() == y ) {
@@ -150,8 +152,14 @@ void AnimerSerpent::ajouterFruit()
         }
     }
     }
-    f1->setX(x);
-    f1->setY(y);
+
+    if(rand >= 1 && x < 1160 && y < 560 ){
+        f1->setX(x+40);
+        f1->setY(y+40);
+    }else{
+        f1->setX(x);
+        f1->setY(y);
+    }
 
 }
 
@@ -177,7 +185,6 @@ void AnimerSerpent::ajouterFruit2()
     }
     f1->setX(x);
     f1->setY(y);
-
 }
 
 

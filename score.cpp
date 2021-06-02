@@ -20,7 +20,6 @@ int Score::getScore()
 void Score::setScore(int valeur)
 {
     score = valeur;
-    setPlainText("Score: " + QString::number(score));
 }
 
 

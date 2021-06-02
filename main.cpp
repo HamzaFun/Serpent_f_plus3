@@ -11,14 +11,16 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    QPixmap pixmap(":/bg/blackbg.jpg");
-    QSplashScreen splash(pixmap);
+    QPixmap pixmap(":/bg/imageMenu.jpg");
+    QSplashScreen splash(pixmap.scaled(1200,600));
     splash.show();
-    splash.showMessage("Loaded modules");
+    splash.showMessage("Loading");
 
     jeu = new Jeu();
     jeu->show();
-    jeu->afficherMenu("Jeu Serpent ", "Jouer");
+
+    jeu->afficherMenu();
+    qDebug() << "aficher menu 2";
 
     a.processEvents();
     return a.exec();

@@ -8,7 +8,7 @@ Music::Music(QString media, QObject* parent):QMediaPlayer(parent)
     QMediaPlaylist* playlist = new QMediaPlaylist(this);
     playlist->addMedia(QUrl("qrc:/Sounds/"+media));
     playlist->setPlaybackMode(QMediaPlaylist::Loop);
-    setVolume(50);
+    setVolume(40);
     setPlaylist(playlist);
 }
 

@@ -13,6 +13,7 @@ QString SerpPart::image = "1";
 SerpPart::SerpPart(QGraphicsItem* parent):QGraphicsPixmapItem(parent)
 , pas(40)
 {
+    part = "";
     setZValue(1);
 }
 
@@ -62,10 +63,10 @@ void SerpPart::move()
             this->setY(0);
         }
         else if(this->y() < 0){
-            this->setY(600);
+            this->setY(560);
         }
         else if(this->x() < 0){
-            this->setX(1200);
+            this->setX(1160);
         }
         else if(this->x() >= 1200){
             this->setX(0);
@@ -114,10 +115,9 @@ void SerpPart::checkCollidingObject()
             QPointF foodCenter(f->x()+10,f->y()+10);
             QLineF ln(thisCenter,foodCenter);
             if(ln.length() == 0){
-
-                jeu->serp->ajoutePart(); 
-                jeu->sceneDeJeu->removeItem(f);
+                jeu->serp->ajoutePart();
                 jeu->score->setScore(jeu->score->getScore()+ f->score);
+                jeu->sceneDeJeu->removeItem(f);
                 delete f;
                 if(jeu->score->getScore() == l){
                     emit jeu->sfx->trigger(jeu->sfx->coin_2);
@@ -127,12 +127,16 @@ void SerpPart::checkCollidingObject()
                     emit jeu->sfx->trigger(jeu->sfx->coin_1);
                     emit manger();
                 }
-                if(jeu->obs != NULL){
-
+                if(jeu->obs != NULL ){
                     if(jeu->obs->maxScore <= jeu->score->getScore()){
-                        qDebug() << "next stage";
-                        jeu->StageCourant++;
+                        if(jeu->obs->ObsCourant < 7){
+                        emit jeu->sfx->trigger(jeu->sfx->win_1);
                         emit finStage();
+                        }
+                        else {
+                            emit jeu->sfx->trigger(jeu->sfx->win_2);
+                            emit gagnerJeu();
+                        }
                     }
                 }
             }
@@ -161,7 +165,11 @@ void SerpPart::setImage()
         }else if(direction == "LEFT"){
             path += "headLeft.png";
         }else if(direction == "RIGHT"){
-            setPixmap(QPixmap(QString(":/skins/%1head.png").arg(image)).scaled(40,40,Qt::KeepAspectRatio));
+            if(image ==  "")
+                setPixmap(QPixmap(QString(":/skins/%1head.png").arg(image)).scaled(40,40,Qt::KeepAspectRatio));
+            else path += "head.png";
+
+
         }
         setZValue(2);
 

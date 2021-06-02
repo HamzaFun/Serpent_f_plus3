@@ -10,61 +10,70 @@
 #include "score.h"
 #include "soundeffects.h"
 #include "music.h"
+#include "page.h"
+#include "backmusic.h"
 
 class Jeu : public QGraphicsView
 {
     Q_OBJECT
-    Q_PROPERTY(qreal opacityFactor READ opacityFactor WRITE setOpacityFactor NOTIFY opacityFactorChanged )
 public:
     Jeu(QWidget* parent=0);
     QGraphicsScene* sceneDeJeu;
-    SoundEffects* sfx;
     AnimerSerpent* serp;
-    AnimerSerpent* serp2;
-
-    QGraphicsTextItem* titreText = NULL;
-    QGraphicsTextItem* pauseText = NULL;
-    QGraphicsTextItem* choixText = NULL;
-    QGraphicsTextItem* stagesText = NULL;
-
-    qreal m_opacityFactor;
-    QPropertyAnimation * m_opacityAnimation;
-    void setOpacityFactor(qreal valeur);
-    qreal opacityFactor();
-
     Score* score;
     Obstacles* obs = NULL;
-    Button* b;
+    BackMusic* back_music;
+    SoundEffects* sfx;
 
-    Music* background_music;
-    Music* menu_music;
-    Music* findejeu_music;
+    Page* menuPage = NULL;
+    Page* pausePage = NULL;
+    Page* choixPage = NULL;
+    Page* stagesPage = NULL;
+    Page* nextStgPage = NULL;
+    Page* finPage = NULL;
+    Page* gagnerPage = NULL;
+    Page* finTextPage = NULL;
+    Page* infoPage = NULL;
+    Page* peauPage = NULL;
 
+    QString peau;
     int stg;
     int StageCourant;
+    int StageAttendue;
+    int topScore = 0;
+    QPointF millieu_scene;
+    QPointF debut_scene;
 
     void keyPressEvent(QKeyEvent *event);
-    void afficherMenu(QString titre, QString jouer);
-    void afficherFin(QString titre, QString jouer);
+    void afficherMenu();
+    void afficherFin();
     void finJeu();
+    void suprimerItem(QGraphicsItem* item);
 private:
     QGraphicsPixmapItem* background;
     QMediaPlayer* creerMusic(QString music);
-    Button* creerStg(QString text, int w, int h, int xpos, int ypos, int stg, QGraphicsTextItem* pere);
-    Button* creerBtn(QString text, int w, int h, int xpos, int ypos, bool debut, QGraphicsTextItem* pere);
+
+    Button* creerStg(QString text, int w, int h, int xpos, int ypos, int stg, Page* pere);
+    Button* creerBtn(QString text, int w, int h, int xpos, int ypos, bool debut, Page* pere);
     QString font;
-    QGraphicsTextItem* textremove(QGraphicsTextItem* text);
-    QGraphicsTextItem* creertext(QString titre, QString font,Qt::GlobalColor couleur);
+    void deleteAllPages();
+    void creerToutPages();
+    void fadeOutAll();
 public slots:
     void debut();
     void creerObs(int);
     void afficherStages();
+    void afficherNext();
     void afficherPause();
+    void afficherInfo();
+    void afficherPeau();
     void choix();
     void retourAffich();
     void commancer();
-    void routeurMenu();
-    void stageSuiv();
+    void retourMenu();
+    void afficherGagner();
+    void afficherFinText();
+    void setPeau(QString);
 signals:
     void opacityFactorChanged(qreal);
 };

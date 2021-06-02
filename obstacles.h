@@ -7,7 +7,7 @@ class Obstacles : public QGraphicsRectItem
 {
 public:
     Obstacles(int Num,QGraphicsItem* parent=0);
-    void ajouterMurPart(int x,int y);
+    void ajouterMurPart(int x,int y, int scale);
     QString type;
     int ObsCourant;
     int maxScore;
@@ -18,6 +18,11 @@ private:
     void crearObs3();
     void crearObs4();
     void crearObs5();
+    void crearObs6();
+    void crearObs7();
+//    void crearObs8();
+//    void crearObs9();
+//    void crearObs10();
 
 };
 

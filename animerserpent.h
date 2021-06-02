@@ -16,6 +16,7 @@ public:
     void animer();
     QTimer* t;
     QMediaPlayer* eatSound;
+    SerpPart* serpTete;
 
 public slots:
     void move();
@@ -23,7 +24,6 @@ public slots:
     void ajouterFruit2();
 
 private:
-    SerpPart* serpTete;
     SerpPart* serpQueue;
     QString direction;
     QGraphicsTextItem* text;
