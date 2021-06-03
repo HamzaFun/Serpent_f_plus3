@@ -104,5 +104,9 @@
         <file>rand/food.png</file>
         <file>rand/food2.png</file>
         <file>bg/comment.png</file>
+        <file>bg/DEFAULT.png</file>
+        <file>bg/KOBRA.png</file>
+        <file>bg/SPIRIT.png</file>
+        <file>bg/JUNGLE.png</file>
     </qresource>
 </RCC>

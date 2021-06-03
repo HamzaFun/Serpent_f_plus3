@@ -6,6 +6,7 @@
 #include <QThread>
 #include <qevent.h>
 #include "jeu.h"
+#include "murpart.h"
 
 extern Jeu* jeu;
 
@@ -24,9 +25,9 @@ AnimerSerpent::AnimerSerpent(QGraphicsItem* parent):QGraphicsRectItem(parent)
     connect(serpTete, SIGNAL(gagnerJeu()), jeu, SLOT(afficherGagner()));
     t = new QTimer();
     connect(t, SIGNAL(timeout()), this, SLOT(move()));
-//    for(int i=0;i< 20;++i){
+    for(int i=0;i< 20;++i){
     ajouterFruit();
-//}
+}
     eatSound = new QMediaPlayer();
     eatSound->setMedia(QUrl("qrc:/sounds/eat.wav"));
 
@@ -146,7 +147,9 @@ void AnimerSerpent::ajouterFruit()
     y = QRandomGenerator::global()->bounded(8) *80 ;
 
     for(int i=0; i < coll.length(); ++i){
-        if(coll[i]->pos().x() == x && coll[i]->pos().y() == y ) {
+        MurPart* m = dynamic_cast<MurPart *>(coll[i]);
+        if(m)
+        if((m->pos().x() == x && m->pos().y() == y) || (m->pos().x()+40 == x && m->pos().y()+40 == y) || (m->pos().x() == x && m->pos().y()+40 == y) || (m->pos().x()+40 == x && m->pos().y() == y)  ) {
             k++;
             break;
         }

@@ -212,7 +212,7 @@ void Button::setDecor(QPainter* painter)
         brush.setStyle(Qt::SolidPattern);
         painter->setClipPath(*path);
         painter->setBackground(brush);
-//        if(parentItem()->opacity() == 1){
+
         if(hovered){
             pen.setWidth(3);
             painter->drawPixmap(0,0, QPixmap(":/bg/bg"+QString::number(stgNum)+".png").scaled(150,150,Qt::KeepAspectRatioByExpanding));
@@ -220,7 +220,9 @@ void Button::setDecor(QPainter* painter)
         }else{
             painter->drawPixmap(0,0, QPixmap(":/bg/bg"+QString::number(stgNum)+".png").scaled(190,190,Qt::KeepAspectRatioByExpanding));
         }
-//        }
+        if(stgNum == 0){
+            painter->drawPixmap(-20,0, QPixmap(":/bg/"+titre+".png").scaled(200,200,Qt::KeepAspectRatioByExpanding));
+        }
         break;
         case Button::Buttontype::invalid :
         break;
