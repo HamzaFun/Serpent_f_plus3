@@ -25,9 +25,9 @@ AnimerSerpent::AnimerSerpent(QGraphicsItem* parent):QGraphicsRectItem(parent)
     connect(serpTete, SIGNAL(gagnerJeu()), jeu, SLOT(afficherGagner()));
     t = new QTimer();
     connect(t, SIGNAL(timeout()), this, SLOT(move()));
-    for(int i=0;i< 20;++i){
+//    for(int i=0;i< 20;++i){
     ajouterFruit();
-}
+//}
 
 
     connect( serpTete, SIGNAL(manger()), this, SLOT(ajouterFruit()));

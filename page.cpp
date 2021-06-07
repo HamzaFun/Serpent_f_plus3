@@ -50,12 +50,12 @@ Page::Page(QString titre, QString font, QString fin, Qt::GlobalColor couleur, QG
     text->setPos(550- text->boundingRect().width()/2, yPos);
     creerText("Merci d'avoir joué",550,yPos+80,font,40,Qt::red);
 //    creerText("JEU ADVENTURE",550,yPos+2*80,font,40,couleur);
-    creerText("CREER PAR :",550,yPos+2*80,font,40,couleur);
+    creerText("REALISER PAR :",550,yPos+2*80,font,40,couleur);
     creerText("Zakaria El Idrissi",550,yPos+3*80,font,30,Qt::white);
     creerText("Hamza El Filali",550,yPos+4*80,font,30,Qt::white);
-    creerText("GERER PAR :",550,yPos+5*80,font,40,couleur);
-    creerText("Mr. SABANE",550,yPos+6*80,font,40,Qt::white);
-    creerText("() PUIEZ SUR ESPACE POUR PASSER ()",110,1200,font,20,Qt::white);
+    creerText("ENCADRE PAR :",550,yPos+5*80,font,40,couleur);
+    creerText("Mr.MOHAMED SABBANE",550,yPos+6*80,font,40,Qt::white);
+    creerText("() PUIEZ SUR ESPACE POUR PASSER ()",110,1100,font,20,Qt::white);
     setZValue(10);
     m_scrollAnimation = creerAnimation("scrollFactor", this, 0, 1, 10000, QEasingCurve::Linear);
     m_animation = creerAnimation("animationFactor", this, 0, 1, 600, QEasingCurve::Linear);
@@ -65,7 +65,7 @@ Page::Page(QString titre, QString font, QString fin, Qt::GlobalColor couleur, QG
     transparencyBackground->setPos(this->mapFromScene(0,0));
     transparencyBackground->setZValue(0);
     transparencyBackground->setPixmap(QPixmap(":/bg/blackbg.jpg").scaled(1200,600));
-    transparencyBackground->setOpacity(0.5);
+    transparencyBackground->setOpacity(0.8);
 }
 
 void Page::fadeOut()

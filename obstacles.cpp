@@ -47,7 +47,7 @@ void Obstacles::ajouterMurPart(int x, int y, int scale)
 {
     if(scale == 0) scale = 40;
     MurPart* part = new MurPart(NULL, scale, this);
-    part->setOpacity(0.5);
+    part->setOpacity(0);
     part->setPos(x,y);
 }
 

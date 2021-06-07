@@ -21,7 +21,7 @@ public:
 
     void move();
     void ajouterDerrier();
-    void checkCollidingObject();
+    void verifierCollObject();
 
     QString part;
     void setImage();

@@ -49,7 +49,6 @@ void SerpPart::setDirection(QString valeur)
 
 void SerpPart::move()
 {
-    static int premier;
     if(direction == "DOWN"){
         this->setY(this->y()+pas);
     } else if(direction == "UP")
@@ -58,26 +57,23 @@ void SerpPart::move()
         this->setX(this->x()- pas);
     else if(direction == "RIGHT")
         this->setX(this->x()+pas);
-    if(premier){
-        if(this->y() >= 600){
-            this->setY(0);
-        }
-        else if(this->y() < 0){
-            this->setY(560);
-        }
-        else if(this->x() < 0){
-            this->setX(1160);
-        }
-        else if(this->x() >= 1200){
-            this->setX(0);
-        }
+    if(this->y() >= 600){
+        this->setY(0);
     }
-    premier++;
+    else if(this->y() < 0){
+        this->setY(560);
+    }
+    else if(this->x() < 0){
+        this->setX(1160);
+    }
+    else if(this->x() >= 1200){
+        this->setX(0);
+    }
     if(this->Suiv()!= NULL)
         direction = this->Suiv()->direction;
     setImage();
     if(part == "HEAD")
-        checkCollidingObject();
+        verifierCollObject();
 }
 
 void SerpPart::ajouterDerrier()
@@ -103,11 +99,9 @@ void SerpPart::ajouterDerrier()
     setPos(x,y);
 }
 
-void SerpPart::checkCollidingObject()
+void SerpPart::verifierCollObject()
 {
     QList <QGraphicsItem* > coll = this->collidingItems();
-
-//
     for(int i = 0, n = coll.length(); i< n; ++i){
         Fruit* f = dynamic_cast<Fruit *>(coll[i]);
         if(f) {
@@ -157,7 +151,6 @@ void SerpPart::setImage()
 {
     QString path = ":/skins/"+ image;
     if(part == "HEAD"){
-
         if(direction == "UP"){
             path +=  "headup.png";
         }else if(direction == "DOWN"){
@@ -168,11 +161,8 @@ void SerpPart::setImage()
             if(image ==  "")
                 setPixmap(QPixmap(QString(":/skins/%1head.png").arg(image)).scaled(40,40,Qt::KeepAspectRatio));
             else path += "head.png";
-
-
         }
         setZValue(2);
-
     }
     else if(part == "TAIL") {
         if(direction == "UP"){
