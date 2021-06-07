@@ -13,7 +13,7 @@ class Button :public QObject, public QGraphicsRectItem
 //    Q_PROPERTY(qreal lightFactor READ lightFactor WRITE setLightFactor )
 public:
     enum class Buttontype{
-      menu, stage, retour, invalid
+      menu, stage, retour/*, invalid*/
     };
     Button(QString name,int width, int height,Buttontype btnTyp, QGraphicsItem * parent = NULL);
     Button(QString name,int width, int height,int stg, QGraphicsItem * parent = NULL);
@@ -26,15 +26,14 @@ public:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
-    void deletelock();
+    void supprimerlock();
     void setHoverd();
     void setDecor(QPainter* painter);
     void setMonBrush(QBrush *brush);
-    void draw();
     bool hovered;
     int stgNum ;
 
-    QGraphicsDropShadowEffect* effect;
+    QGraphicsBlurEffect* effect2;
     qreal m_opacityFactor;
     QPropertyAnimation * m_opacityAnimation;
     void setOpacityFactor(qreal valeur);
@@ -52,10 +51,6 @@ signals:
     void clicked();
     void clicked(int);
     void clicked(QString);
-private:
-
-    int width;
-    int height;
 };
 
 #endif // BUTTON_H

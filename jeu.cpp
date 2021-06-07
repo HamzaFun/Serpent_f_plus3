@@ -164,12 +164,12 @@ void Jeu::afficherStages()
     int h = 150;
     Button* stage = creerStg("DEBUT", h, h, 175,y, 1, stagesPage);
     Button* stage2 = creerStg("CHAMBRE", h, h, x +175 ,  y, 2, stagesPage);
-    Button* stage3 = creerStg("3", h, h, 2*x +175, y, 3, stagesPage);
-    Button* stage4 = creerStg("4", h, h, 3*x +175, y, 4, stagesPage);
-    Button* stage5 = creerStg("5", h, h, 4*x +175, y, 5, stagesPage);
-    Button* stage6 = creerStg("6", h, h, 175    ,3*y, 6, stagesPage);
-    Button* stage7 = creerStg("7", h, h, x+175  ,3*y, 7, stagesPage);
-    Button* stage8 = creerStg("8", h, h, 2*x+175,3*y, 8, stagesPage);
+    Button* stage3 = creerStg("PASSERELLE", h, h, 2*x +175, y, 3, stagesPage);
+    Button* stage4 = creerStg("PASSERELLE 2", h, h, 3*x +175, y, 4, stagesPage);
+    Button* stage5 = creerStg("FONDERIE", h, h, 4*x +175, y, 5, stagesPage);
+    Button* stage6 = creerStg("JARDIN", h, h, 175    ,3*y, 6, stagesPage);
+    Button* stage7 = creerStg("TOURBIER", h, h, x+175  ,3*y, 7, stagesPage);
+    Button* stage8 = creerStg("CHEMIN DE CIEL", h, h, 2*x+175,3*y, 8, stagesPage);
 
     //bouton de routeur
     Button* retour = new Button("<< RETOUR", 140, 50, Button::Buttontype::retour, stagesPage);
@@ -252,19 +252,19 @@ void Jeu::afficherPeau()
         int h = 150;
         Button* defaut = new Button("DEFAULT", h, h, 0, peauPage);
         defaut->setPos( 175, y);
-        defaut->deletelock();
+        defaut->supprimerlock();
         connect(defaut, SIGNAL(clicked(QString)),this,SLOT(setPeau(QString)));
         Button* kobra = new Button("KOBRA", h, h, 0, peauPage);
         kobra->setPos( x+175, y);
-        kobra->deletelock();
+        kobra->supprimerlock();
         connect(kobra, SIGNAL(clicked(QString)),this,SLOT(setPeau(QString)));
         Button* jungle = new Button("JUNGLE", h, h, 0, peauPage);
         jungle->setPos( 2*x+175, y);
-        jungle->deletelock();
+        jungle->supprimerlock();
         connect(jungle, SIGNAL(clicked(QString)),this,SLOT(setPeau(QString)));
         Button* spirit = new Button("SPIRIT", h, h, 0, peauPage);
         spirit->setPos( 3*x+175, y);
-        spirit->deletelock();
+        spirit->supprimerlock();
         connect(spirit, SIGNAL(clicked(QString)),this,SLOT(setPeau(QString)));
 
         Button* retour = new Button("<< RETOUR", 140, 50, Button::Buttontype::retour, peauPage);
@@ -283,7 +283,7 @@ void Jeu::debut()
     back_music->stopAll();
     back_music->jeu_music->playMusic();
     fadeOutAll();
-    deleteAllPages();
+    supprimerToutPages();
     creerToutPages();
     if(obs == NULL ){
     background->setPixmap(QPixmap(":/bg/blackbg.jpg").scaled(1200,600));
@@ -450,7 +450,7 @@ Button *Jeu::creerStg(QString text, int w, int h, int xpos, int ypos, int stg, P
     Button* button;
     button = new Button(text, w, h, stg, pere);
     if(stg <= StageAttendue){
-        button->deletelock();
+        button->supprimerlock();
     }
     button->setHoverd();
     connect(button, SIGNAL(clicked(int)),this,SLOT(creerObs(int)));
@@ -479,7 +479,7 @@ void Jeu::suprimerItem(QGraphicsItem *item)
     }
 }
 
-void Jeu::deleteAllPages()
+void Jeu::supprimerToutPages()
 {
     suprimerItem(menuPage);
     suprimerItem(stagesPage);

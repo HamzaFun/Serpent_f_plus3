@@ -37,7 +37,6 @@ public:
     Page* peauPage = NULL;
 
     QString peau;
-    int stg;
     int StageCourant;
     int StageAttendue;
     int topScore = 0;
@@ -51,12 +50,12 @@ public:
     void suprimerItem(QGraphicsItem* item);
 private:
     QGraphicsPixmapItem* background;
-    QMediaPlayer* creerMusic(QString music);
+//    QMediaPlayer* creerMusic(QString music);
 
     Button* creerStg(QString text, int w, int h, int xpos, int ypos, int stg, Page* pere);
     Button* creerBtn(QString text, int w, int h, int xpos, int ypos, bool debut, Page* pere);
     QString font;
-    void deleteAllPages();
+    void supprimerToutPages();
     void creerToutPages();
     void fadeOutAll();
 public slots:

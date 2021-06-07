@@ -55,7 +55,7 @@ Page::Page(QString titre, QString font, QString fin, Qt::GlobalColor couleur, QG
     creerText("Hamza El Filali",550,yPos+4*80,font,30,Qt::white);
     creerText("GERER PAR :",550,yPos+5*80,font,40,couleur);
     creerText("Mr. SABANE",550,yPos+6*80,font,40,Qt::white);
-    creerText("() PUIEZ SUR ESPACE POUR PASSER ()",90,1200,font,20,Qt::white);
+    creerText("() PUIEZ SUR ESPACE POUR PASSER ()",110,1200,font,20,Qt::white);
     setZValue(10);
     m_scrollAnimation = creerAnimation("scrollFactor", this, 0, 1, 10000, QEasingCurve::Linear);
     m_animation = creerAnimation("animationFactor", this, 0, 1, 600, QEasingCurve::Linear);

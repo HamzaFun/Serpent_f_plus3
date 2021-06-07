@@ -6,45 +6,37 @@ Obstacles::Obstacles(int Num,QGraphicsItem* parent):QGraphicsRectItem(parent)
     ObsCourant = Num;
     switch(Num){
     case 1:
-        crearObs1();
+        creerObs1();
         maxScore = 2;
         break;
     case 2:
-        crearObs2();
-        maxScore = 3;
+        creerObs2();
+        maxScore = 1;
         break;
     case 3:
-        crearObs3();
-        maxScore = 4;
+        creerObs3();
+        maxScore = 1;
         break;
     case 4:
-        crearObs4();
-        maxScore = 4;
+        creerObs4();
+        maxScore = 1;
         break;
     case 5:
-        crearObs5();
-        maxScore = 4;
+        creerObs5();
+        maxScore = 1;
         break;
     case 6:
-        crearObs6();
-        maxScore = 4;
+        creerObs6();
+        maxScore = 1;
         break;
     case 7:
-        crearObs7();
+        creerObs7();
+        maxScore = 1;
+        break;
+    case 8:
+        creerObs8();
         maxScore = 4;
         break;
-//    case 8:
-//        crearObs8();
-//        maxScore = 4;
-//        break;
-//    case 9:
-//        crearObs9();
-//        maxScore = 4;
-//        break;
-//    case 10:
-//        crearObs10();
-//        maxScore = 4;
-//        break;
     default:
         break;
     }
@@ -59,7 +51,7 @@ void Obstacles::ajouterMurPart(int x, int y, int scale)
     part->setPos(x,y);
 }
 
-void Obstacles::crearObs1()
+void Obstacles::creerObs1()
 {
     int scale = 80;
     bg = ":/bg/back1.png";
@@ -72,7 +64,7 @@ void Obstacles::crearObs1()
     }
 }
 
-void Obstacles::crearObs2()
+void Obstacles::creerObs2()
 {
     int scale = 80;
     bg = ":/bg/back2.png";
@@ -91,7 +83,7 @@ void Obstacles::crearObs2()
 
 }
 
-void Obstacles::crearObs3()
+void Obstacles::creerObs3()
 {
     int scale = 80;
     bg = ":/bg/back3.png";
@@ -112,7 +104,7 @@ void Obstacles::crearObs3()
     }
 }
 
-void Obstacles::crearObs4()
+void Obstacles::creerObs4()
 {
     int scale = 80;
     bg = ":/bg/back4.png";
@@ -139,7 +131,7 @@ void Obstacles::crearObs4()
     }
 }
 
-void Obstacles::crearObs5()
+void Obstacles::creerObs5()
 {
     int scale = 80;
     bg = ":/bg/back5.png";
@@ -161,7 +153,7 @@ void Obstacles::crearObs5()
     }
 }
 
-void Obstacles::crearObs6()
+void Obstacles::creerObs6()
 {
     int scale = 80;
     bg = ":/bg/back6.png";
@@ -181,7 +173,7 @@ void Obstacles::crearObs6()
     ajouterMurPart(0,520, scale);
 }
 
-void Obstacles::crearObs7()
+void Obstacles::creerObs7()
 {
     int scale = 80;
     bg = ":/bg/back7.png";
@@ -203,4 +195,22 @@ void Obstacles::crearObs7()
         ajouterMurPart(s,  240, scale);
         s+=80;
     }
+}
+void Obstacles::creerObs8()
+{
+    int scale = 80;
+    bg = ":/bg/back8.png";
+    int s=0;
+    for(int i =0; i < 15; ++i){
+        ajouterMurPart(s,0, scale);
+        ajouterMurPart(s,520, scale);
+        s+=80;
+    }
+    s=240;
+    for(int i =0; i < 12; ++i){
+        ajouterMurPart(s,160, scale);
+        ajouterMurPart(s-240,400, scale);
+        s+=80;
+    }
+    ajouterMurPart(s-240,400, scale);
 }

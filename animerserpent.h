@@ -12,10 +12,9 @@ class AnimerSerpent :public QObject, public QGraphicsRectItem
 public:
     AnimerSerpent(QGraphicsItem* prent=0);
     void keyPressEvent(QKeyEvent *event);
-    void ajoutePart();
+    void ajouterPart();
     void animer();
     QTimer* t;
-    QMediaPlayer* eatSound;
     SerpPart* serpTete;
 
 public slots:

@@ -13,14 +13,14 @@ public:
     int maxScore;
     QString bg;
 private:
-    void crearObs1();
-    void crearObs2();
-    void crearObs3();
-    void crearObs4();
-    void crearObs5();
-    void crearObs6();
-    void crearObs7();
-//    void crearObs8();
+    void creerObs1();
+    void creerObs2();
+    void creerObs3();
+    void creerObs4();
+    void creerObs5();
+    void creerObs6();
+    void creerObs7();
+    void creerObs8();
 //    void crearObs9();
 //    void crearObs10();
 

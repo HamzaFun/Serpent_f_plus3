@@ -28,8 +28,7 @@ AnimerSerpent::AnimerSerpent(QGraphicsItem* parent):QGraphicsRectItem(parent)
     for(int i=0;i< 20;++i){
     ajouterFruit();
 }
-    eatSound = new QMediaPlayer();
-    eatSound->setMedia(QUrl("qrc:/sounds/eat.wav"));
+
 
     connect( serpTete, SIGNAL(manger()), this, SLOT(ajouterFruit()));
     connect( serpTete, SIGNAL(mangerF()), this, SLOT(ajouterFruit2()));
@@ -39,9 +38,9 @@ AnimerSerpent::AnimerSerpent(QGraphicsItem* parent):QGraphicsRectItem(parent)
 
     direction = "RIGHT";
 
-    ajoutePart();
-    ajoutePart();
-    ajoutePart();
+    ajouterPart();
+    ajouterPart();
+    ajouterPart();
 
     text = new QGraphicsTextItem(this);
     text->setVisible(true);
@@ -95,7 +94,7 @@ void AnimerSerpent::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void AnimerSerpent::ajoutePart()
+void AnimerSerpent::ajouterPart()
 {
     SerpPart* part = new SerpPart(this);
     SerpPart* temp = serpTete;
@@ -137,14 +136,14 @@ void AnimerSerpent::ajouterFruit()
     Fruit* f1 = new Fruit("POMME", this);
     int x ;
     int y ;
-    int rand;
+//    int rand;
     int k=1;
     while(k != 0){
         k=0;
-    rand  = QRandomGenerator::global()->bounded(2);
+//    rand  = QRandomGenerator::global()->bounded(2);
     QList <QGraphicsItem* > coll = jeu->sceneDeJeu->items();
-    x = QRandomGenerator::global()->bounded(1200/80) *80 ;
-    y = QRandomGenerator::global()->bounded(8) *80 ;
+    x = QRandomGenerator::global()->bounded(30) *40 ;
+    y = QRandomGenerator::global()->bounded(15) *40 ;
 
     for(int i=0; i < coll.length(); ++i){
         MurPart* m = dynamic_cast<MurPart *>(coll[i]);
@@ -156,13 +155,13 @@ void AnimerSerpent::ajouterFruit()
     }
     }
 
-    if(rand >= 1 && x < 1160 && y < 560 ){
-        f1->setX(x+40);
-        f1->setY(y+40);
-    }else{
+//    if(rand >= 1 && x < 1160 && y < 560 ){
+//        f1->setX(x+40);
+//        f1->setY(y+40);
+//    }else{
         f1->setX(x);
         f1->setY(y);
-    }
+//    }
 
 }
 

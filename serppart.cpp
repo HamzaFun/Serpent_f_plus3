@@ -115,7 +115,7 @@ void SerpPart::checkCollidingObject()
             QPointF foodCenter(f->x()+10,f->y()+10);
             QLineF ln(thisCenter,foodCenter);
             if(ln.length() == 0){
-                jeu->serp->ajoutePart();
+                jeu->serp->ajouterPart();
                 jeu->score->setScore(jeu->score->getScore()+ f->score);
                 jeu->sceneDeJeu->removeItem(f);
                 delete f;
@@ -129,7 +129,7 @@ void SerpPart::checkCollidingObject()
                 }
                 if(jeu->obs != NULL ){
                     if(jeu->obs->maxScore <= jeu->score->getScore()){
-                        if(jeu->obs->ObsCourant < 7){
+                        if(jeu->obs->ObsCourant < 8){
                         emit jeu->sfx->trigger(jeu->sfx->win_1);
                         emit finStage();
                         }

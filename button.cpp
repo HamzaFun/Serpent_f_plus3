@@ -30,11 +30,11 @@ Button::Button(QString name, int width, int height, Buttontype btnTyp, QGraphics
     text->setPos(xPos,yPos);
     text->setDefaultTextColor(Qt::white);
 
-    effect = new QGraphicsDropShadowEffect();
-    effect->setBlurRadius(0);
-    effect->setOffset(0,0);
-    effect->setColor(Qt::blue);
-    setGraphicsEffect(effect);
+//    effect = new QGraphicsDropShadowEffect();
+//    effect->setBlurRadius(0);
+//    effect->setOffset(0,0);
+//    effect->setColor(Qt::blue);
+//    setGraphicsEffect(effect);
 
     m_opacityAnimation = creerAnimation("opacityFactor",this,0,1,800,QEasingCurve::OutCurve);
 //    m_opacityAnimation->start();
@@ -69,11 +69,11 @@ Button::Button(QString name,int width, int height, int stg, QGraphicsItem* paren
     text->setPos(xPos,yPos);
 
 //    listImages = {"bg1.png", "bg2.png", "bg3.png", "bg4.png", "bg5.png", "bg6.png","bg7.png"};
-    effect = new QGraphicsDropShadowEffect(this);
-    effect->setBlurRadius(0);
-    effect->setOffset(0,0);
-    effect->setColor(Qt::blue);
-    setGraphicsEffect(effect);
+//    effect2 = new QGraphicsDropShadowEffect(this);
+//    effect2->setBlurRadius(0);
+//    effect2->setOffset(0,0);
+//    effect2->setColor(Qt::blue);
+//    setGraphicsEffect(effect2);
 
 //    m_lightAnimation = creerAnimation("lightFactor", this, 0.3, 0.3, 2000, QEasingCurve::Linear);
 //    m_lightAnimation->setKeyValueAt(0.5,1);
@@ -141,13 +141,13 @@ void Button::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
 //        stop();
         hovered = false;
         text->setY(text->y()-2);
-        if(effect != NULL)
-            effect->setBlurRadius(0);
+//        if(effect != NULL)
+//            effect->setBlurRadius(0);
         update();
     }
 }
 
-void Button::deletelock()
+void Button::supprimerlock()
 {
     if(locke != NULL){
     delete locke;
@@ -158,15 +158,17 @@ void Button::deletelock()
 void Button::setHoverd()
 {
     if(locke != NULL){
+    text->setDefaultTextColor(Qt::gray);
     setOpacity(80);
     setAcceptedMouseButtons(Qt::NoButton);
     setAcceptHoverEvents(false);
     }
     else{
         setOpacity(100);
+        text->setDefaultTextColor(Qt::white);
         setAcceptedMouseButtons(Qt::AllButtons);
         setAcceptHoverEvents(true);
-        deletelock();
+        supprimerlock();
     }
 }
 
@@ -212,20 +214,18 @@ void Button::setDecor(QPainter* painter)
         brush.setStyle(Qt::SolidPattern);
         painter->setClipPath(*path);
         painter->setBackground(brush);
-
         if(hovered){
             pen.setWidth(3);
             painter->drawPixmap(0,0, QPixmap(":/bg/bg"+QString::number(stgNum)+".png").scaled(150,150,Qt::KeepAspectRatioByExpanding));
             setCursor(QCursor(Qt::PointingHandCursor));
         }else{
-            painter->drawPixmap(0,0, QPixmap(":/bg/bg"+QString::number(stgNum)+".png").scaled(190,190,Qt::KeepAspectRatioByExpanding));
+            painter->drawPixmap(0,0, QPixmap(":/bg/bg"+QString::number(stgNum)+".png").scaled(160,160,Qt::KeepAspectRatioByExpanding));
         }
         if(stgNum == 0){
             painter->drawPixmap(-20,0, QPixmap(":/bg/"+titre+".png").scaled(200,200,Qt::KeepAspectRatioByExpanding));
         }
         break;
-        case Button::Buttontype::invalid :
-        break;
+
     }
     painter->setPen(pen);
     painter->drawPath(*path);

@@ -108,5 +108,7 @@
         <file>bg/KOBRA.png</file>
         <file>bg/SPIRIT.png</file>
         <file>bg/JUNGLE.png</file>
+        <file>bg/back8.png</file>
+        <file>bg/bg8.png</file>
     </qresource>
 </RCC>

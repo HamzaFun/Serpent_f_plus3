@@ -10,8 +10,6 @@ class SoundEffects : public QObject
     Q_OBJECT
 public:
     explicit SoundEffects(QObject *parent = nullptr);
-
-    QString dir;
     QMediaPlayer* coin_1;
     QMediaPlayer* coin_2;
     QMediaPlayer* click_1;
@@ -20,7 +18,8 @@ public:
     QMediaPlayer* win_1;
     QMediaPlayer* win_2;
     QMediaPlayer* selfCollid;
-
+private:
+    QString dir;
 private slots:
     void playMedia(QMediaPlayer* media);
 signals:
