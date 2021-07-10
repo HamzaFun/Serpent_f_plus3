@@ -67,8 +67,14 @@ void Jeu::afficherFin()
     if(!sceneDeJeu->items().contains(finPage)){      
         int rx = millieu_scene.x() - 75 - debut_scene.x();
         if(topScore < score->getScore()) topScore = score->getScore();
-        finPage->creerText("TOP SCORE :", rx+30, millieu_scene.y() - 80,font,35,Qt::yellow );
-        finPage->creerText(QString::number(topScore), rx+180, millieu_scene.y() - 80,font,35,Qt::yellow );
+        if( obs == NULL){
+            finPage->creerText("TOP SCORE :", rx+30, millieu_scene.y() - 80,font,35,Qt::yellow );
+            finPage->creerText(QString::number(topScore), rx+180, millieu_scene.y() - 80,font,35,Qt::yellow );
+        }else{
+            finPage->creerText("VOTRE SCORE :", rx+30, millieu_scene.y() - 80,font,35,Qt::yellow );
+            finPage->creerText(QString::number(score->getScore()), rx+180, millieu_scene.y() - 80,font,35,Qt::yellow );
+        }
+
         Button* rejoue = creerBtn("REJOUER", 150, 40, rx , millieu_scene.y() - 20, true, finPage);
         Button* quit = new Button("RETOUR", 150, 40, Button::Buttontype::retour, finPage);
         int ry =  debut_scene.y();
@@ -414,7 +420,6 @@ void Jeu::afficherFinText()
 
     if(!sceneDeJeu->items().contains(finTextPage)){
         sceneDeJeu->addItem(finTextPage);
-//        connect(finTextPage->m_scrollAnimation, SIGNAL(finTextPage->m_scrollAnimation->finished()), this, SLOT(retourAffich()));
     }
 }
 

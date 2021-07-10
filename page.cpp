@@ -21,7 +21,7 @@ Page::Page(QString titre, QString font, Qt::GlobalColor couleur, QGraphicsItem *
     text->setDefaultTextColor(couleur);
     int yPos = 0;
 
-    text->setPos(40, yPos);
+    text->setPos(-40, yPos);
     setZValue(10);
     m_animation = creerAnimation("animationFactor", this, 0, 1, 600, QEasingCurve::Linear);
     m_positionAnimation = creerAnimation("positionFactor", this, 0, 1, 600, QEasingCurve::OutQuad);
@@ -160,7 +160,16 @@ void Page::creerText(QString contenue, int x, int y, QFont font, int fontsize, Q
     Q_UNUSED(txt);
 }
 
-//void Page::setContent()
+
+
+
+
+
+
+
+
+
+/*void Page::setContent()
 //{
 //    if(titre == "JEU SERPENT"){
 //        Button* stages = new Button("STAGES", 150,40,Button::Buttontype::menu, this);
@@ -286,7 +295,7 @@ void Page::creerText(QString contenue, int x, int y, QFont font, int fontsize, Q
 
 //    }/*else if(titre == "SERPENT PRO"){
 
-//    }*/
+//    }
 
 //}
 //Button *Page::creerStg(QString text, int w, int h, int xpos, int ypos, int stg, Page *pere)
@@ -314,4 +323,4 @@ void Page::creerText(QString contenue, int x, int y, QFont font, int fontsize, Q
 //    }
 //    button->setPos( xpos, ypos);
 //    return button;
-//}
+//}*/

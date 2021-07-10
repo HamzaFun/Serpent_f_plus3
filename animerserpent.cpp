@@ -136,11 +136,9 @@ void AnimerSerpent::ajouterFruit()
     Fruit* f1 = new Fruit("POMME", this);
     int x ;
     int y ;
-//    int rand;
     int k=1;
     while(k != 0){
         k=0;
-//    rand  = QRandomGenerator::global()->bounded(2);
     QList <QGraphicsItem* > coll = jeu->sceneDeJeu->items();
     x = QRandomGenerator::global()->bounded(30) *40 ;
     y = QRandomGenerator::global()->bounded(15) *40 ;
@@ -155,13 +153,8 @@ void AnimerSerpent::ajouterFruit()
     }
     }
 
-//    if(rand >= 1 && x < 1160 && y < 560 ){
-//        f1->setX(x+40);
-//        f1->setY(y+40);
-//    }else{
-        f1->setX(x);
-        f1->setY(y);
-//    }
+    f1->setX(x);
+    f1->setY(y);
 
 }
 

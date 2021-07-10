@@ -11,31 +11,31 @@ Obstacles::Obstacles(int Num,QGraphicsItem* parent):QGraphicsRectItem(parent)
         break;
     case 2:
         creerObs2();
-        maxScore = 1;
+        maxScore = 2;
         break;
     case 3:
         creerObs3();
-        maxScore = 1;
+        maxScore = 2;
         break;
     case 4:
         creerObs4();
-        maxScore = 1;
+        maxScore = 2;
         break;
     case 5:
         creerObs5();
-        maxScore = 1;
+        maxScore = 2;
         break;
     case 6:
         creerObs6();
-        maxScore = 1;
+        maxScore = 2;
         break;
     case 7:
         creerObs7();
-        maxScore = 1;
+        maxScore = 2;
         break;
     case 8:
         creerObs8();
-        maxScore = 4;
+        maxScore = 2;
         break;
     default:
         break;

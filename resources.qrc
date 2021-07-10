@@ -33,19 +33,10 @@
         <file>skins/upLeft-rightDown.png</file>
         <file>skins/upRight-leftDown.png</file>
         <file>Sounds/sfx/click1.wav</file>
-        <file>Sounds/sfx/click2.wav</file>
-        <file>Sounds/sfx/click3.wav</file>
         <file>Sounds/sfx/coin.wav</file>
         <file>Sounds/sfx/coin1.wav</file>
         <file>Sounds/sfx/coin3.wav</file>
-        <file>Sounds/sfx/coin4.wav</file>
-        <file>Sounds/sfx/coin5.wav</file>
-        <file>Sounds/sfx/coin6.wav</file>
-        <file>Sounds/sfx/countdown.wav</file>
-        <file>Sounds/sfx/eat.wav</file>
         <file>Sounds/sfx/lose1.wav</file>
-        <file>Sounds/sfx/lose2.wav</file>
-        <file>Sounds/sfx/lose3.wav</file>
         <file>skins/2head.png</file>
         <file>skins/2headDown.png</file>
         <file>skins/2headLeft.png</file>
@@ -76,12 +67,9 @@
         <file>skins/3up-down.png</file>
         <file>skins/3upLeft-rightDown.png</file>
         <file>skins/3upRight-leftDown.png</file>
-        <file>Sounds/sfx/click4.wav</file>
         <file>Sounds/sfx/click5.wav</file>
         <file>Sounds/sfx/click6.wav</file>
         <file>Sounds/sfx/click7.wav</file>
-        <file>Sounds/sfx/click8.wav</file>
-        <file>Sounds/sfx/click9.wav</file>
         <file>Sounds/sfx/hover1.mp3</file>
         <file>Sounds/sfx/win1.wav</file>
         <file>rand/lock.png</file>
