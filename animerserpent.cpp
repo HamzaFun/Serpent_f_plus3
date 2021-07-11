@@ -79,6 +79,7 @@ void AnimerSerpent::keyPressEvent(QKeyEvent *event)
 
     }
     else if( event->key() == Qt::Key_Escape && jeu->finPage->opacity() == 0 && jeu->nextStgPage->opacity() == 0){
+
         if(t->isActive()){
             t->stop();
         }
@@ -89,6 +90,7 @@ void AnimerSerpent::keyPressEvent(QKeyEvent *event)
             {
                 jeu->pausePage->fadeOut();
                 jeu->suprimerItem(jeu->pausePage);
+                jeu->suprimerItem(jeu->choixPage);
             }
         }
     }

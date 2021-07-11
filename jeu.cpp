@@ -199,7 +199,6 @@ void Jeu::afficherStages()
 void Jeu::afficherPause()
 {
     fadeOutAll();
-    pausePage = new Page("PAUSE", font, Qt::white);
     //creer le text de pause
     pausePage->fadeIn();
     //creer les boutons
@@ -323,11 +322,8 @@ void Jeu::finJeu()
 
 void Jeu::commancer()
 {
-//    if(!serp->t->isActive()){
     fadeOutAll();
-    suprimerItem(pausePage);
-    suprimerItem(choixPage);
-//    }
+    supprimerToutPages();
 
 }
 void Jeu::choix()
@@ -346,7 +342,7 @@ void Jeu::choix()
         int ny = millieu_scene.y() - oui->boundingRect().width()/2;
         non->setPos(nx,ny);
         connect(non, SIGNAL(clicked()), this, SLOT(afficherPause()) );
-            sceneDeJeu->addItem(choixPage);
+        sceneDeJeu->addItem(choixPage);
     }
 }
 
